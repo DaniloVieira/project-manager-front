@@ -71,7 +71,7 @@ const secondMenu = [
 const createMenuItems = (confArray, classes) => {
   const result = confArray.map((iConf, index) => {
     return (
-      <ListItem key={iConf.key} button classes={{ root: classes.listItem }}>
+      <ListItem key={iConf.text} button classes={{ root: classes.listItem }}>
         <ListItemIcon>{iConf.icon}</ListItemIcon>
         <ListItemText
           classes={{
