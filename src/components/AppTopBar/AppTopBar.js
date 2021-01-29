@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import {
   makeStyles,
   AppBar,
@@ -23,6 +24,18 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(5),
     paddingLeft: theme.spacing(6),
   },
+  rotate: {
+    transition: theme.transitions.create(['transform'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  open: {
+    transform: 'rotate(-90deg)',
+  },
+  closed: {
+    transform: 'rotate(0)',
+  },
   grow: {
     flexGrow: 1,
   },
@@ -30,11 +43,22 @@ const useStyles = makeStyles((theme) => ({
 
 const AppTopBar = (props) => {
   const classes = useStyles();
+  console.log('[AppTopBar]', props);
   return (
     <AppBar color='inherit' position='fixed' className={classes.appBar}>
       <Toolbar>
-        <IconButton edge='start' className={classes.icons} aria-label='menu'>
-          <MenuIcon />
+        <IconButton
+          onClick={() => props.toggle()}
+          edge='start'
+          className={classes.icons}
+          aria-label='menu'
+        >
+          <MenuIcon
+            className={clsx(classes.rotate, {
+              [classes.open]: props.open,
+              [classes.closed]: !props.open,
+            })}
+          />
         </IconButton>
         <Typography color='textPrimary' variant='h5'>
           Project manager
