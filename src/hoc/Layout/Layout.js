@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles, Box, Hidden, Toolbar } from '@material-ui/core';
 import AppTopBar from '../../components/AppTopBar/AppTopBar';
 import SideMenu from '../../components/SideMenu/SideMenu';
@@ -13,21 +13,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const title = () => {};
-
 const Layout = (props) => {
   const classes = useStyles();
+  const [open, setOpen] = useState(true);
+  const handleDrawerToggle = () => {
+    setOpen(!open);
+  };
+
   return (
     <div className={classes.root}>
-      <AppTopBar {...props}></AppTopBar>
+      <AppTopBar open={open} toggle={handleDrawerToggle} {...props}></AppTopBar>
       <Box display='flex'>
-        <Hidden mdDown>
-          <SideMenu {...props}></SideMenu>
-        </Hidden>
-        <Box p={8}>
-          <Toolbar />
-          <Content>{props.children}</Content>
-        </Box>
+        {/* <Hidden mdDown> */}
+        <SideMenu open={open} {...props}></SideMenu>
+        {/* </Hidden> */}
+        {/* <Box p={8}>
+          <Toolbar /> */}
+        <Content>{props.children}</Content>
+        {/* </Box> */}
       </Box>
     </div>
   );

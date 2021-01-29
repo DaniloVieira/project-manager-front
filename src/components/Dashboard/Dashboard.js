@@ -65,9 +65,9 @@ const Dashboard = (props) => {
   });
 
   return (
-    <Grid container spacing={10}>
+    <Grid container spacing={4}>
       {/* {videos.map((item, index) => ( */}
-      <Grid item lg={6} md={6} sm={12} xs={12}>
+      <Grid item lg={3} md={4} sm={6} xs={12}>
         <Box style={{ border: '1px solid #d5d5d5' }}>
           <ResponsiveContainer width='100%' height={300}>
             <LineChart
@@ -84,7 +84,6 @@ const Dashboard = (props) => {
               <YAxis />
               <Tooltip />
               <Legend
-                width={'100%'}
                 wrapperStyle={{
                   position: 'relative',
                   top: -25,
@@ -101,7 +100,7 @@ const Dashboard = (props) => {
           </ResponsiveContainer>
         </Box>
       </Grid>
-      <Grid item lg={6} md={6} sm={12} xs={12}>
+      <Grid item lg={3} md={4} sm={6} xs={12}>
         <Box style={{ border: '1px solid #d5d5d5' }}>
           <ResponsiveContainer width='100%' height={300}>
             <BarChart
@@ -118,7 +117,6 @@ const Dashboard = (props) => {
               <YAxis />
               <Tooltip />
               <Legend
-                width={'100%'}
                 wrapperStyle={{
                   position: 'relative',
                   top: -25,

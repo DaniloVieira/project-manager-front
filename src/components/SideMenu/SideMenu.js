@@ -1,32 +1,51 @@
 import React from 'react';
+import clsx from 'clsx';
 import {
   makeStyles,
   Toolbar,
-  Typography,
-  Button,
   Drawer,
   List,
   ListItem,
   ListItemText,
   ListItemIcon,
   Divider,
-  Box,
-  ListSubheader,
+  Fade,
 } from '@material-ui/core';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import HomeIcon from '@material-ui/icons/Home';
 import WhatshotIcon from '@material-ui/icons/Whatshot';
 import SubscriptionsIcon from '@material-ui/icons/Subscriptions';
 import VideoLibrary from '@material-ui/icons/VideoLibrary';
 import History from '@material-ui/icons/History';
 
+const drawerWidth = 240;
+
 const useStyles = makeStyles((theme) => ({
   drawer: {
-    width: 240,
+    width: drawerWidth,
     flexShrink: 0,
+    whiteSpace: 'nowrap',
+  },
+  drawerOpen: {
+    width: drawerWidth,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    overflowX: 'hidden',
+  },
+  drawerClose: {
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: 'hidden',
+    width: theme.spacing(7) + 1,
+    [theme.breakpoints.up('sm')]: {
+      width: theme.spacing(12) + 1,
+    },
   },
   drawerPaper: {
-    width: 240,
+    // width: drawerWidth,
     borderRight: 'none',
   },
   listItemText: {
@@ -68,17 +87,19 @@ const secondMenu = [
   },
 ];
 
-const createMenuItems = (confArray, classes) => {
+const createMenuItems = (confArray, classes, show) => {
   const result = confArray.map((iConf, index) => {
     return (
       <ListItem key={iConf.text} button classes={{ root: classes.listItem }}>
         <ListItemIcon>{iConf.icon}</ListItemIcon>
-        <ListItemText
-          classes={{
-            primary: classes.listItemText,
-          }}
-          primary={iConf.text}
-        />
+        <Fade in={show}>
+          <ListItemText
+            classes={{
+              primary: classes.listItemText,
+            }}
+            primary={iConf.text}
+          />
+        </Fade>
       </ListItem>
     );
   });
@@ -87,37 +108,30 @@ const createMenuItems = (confArray, classes) => {
 
 const SideMenu = (props) => {
   const classes = useStyles();
+  console.log('[open]', props.open);
   return (
     <Drawer
-      className={classes.drawer}
       variant='permanent'
+      className={clsx(classes.drawer, {
+        [classes.drawerOpen]: props.open,
+        [classes.drawerClose]: !props.open,
+      })}
       classes={{
-        paper: classes.drawerPaper,
+        paper: clsx(classes.drawerPaper, {
+          [classes.drawerOpen]: props.open,
+          [classes.drawerClose]: !props.open,
+        }),
       }}
     >
       <Toolbar />
       <div className={classes.drawerContainer}>
-        <List>{createMenuItems(mainMenu, classes)}</List>
+        <List>{createMenuItems(mainMenu, classes, props.open)}</List>
         <Divider />
         <List>
-          {createMenuItems(secondMenu, classes)}
+          {createMenuItems(secondMenu, classes, props.open)}
           <Divider />
-          <Box p={7}>
-            <Typography variant='body2'>
-              Um texto ai bem looooongo pra fazer quebra de linha!!
-            </Typography>
-            <Box mt={2}>
-              <Button
-                startIcon={<AccountCircleIcon />}
-                color='secondary'
-                variant='outlined'
-              >
-                Login
-              </Button>
-            </Box>
-          </Box>
+
           <Divider />
-          <ListSubheader>SUB-HEADER</ListSubheader>
         </List>
       </div>
     </Drawer>
