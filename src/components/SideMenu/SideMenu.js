@@ -17,7 +17,7 @@ import SubscriptionsIcon from '@material-ui/icons/Subscriptions';
 import VideoLibrary from '@material-ui/icons/VideoLibrary';
 import History from '@material-ui/icons/History';
 
-const drawerWidth = 240;
+const drawerWidth = 170;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -55,6 +55,9 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 4,
     paddingBottom: 4,
   },
+  listItemIcon: {
+    minWidth: '30px',
+  },
 }));
 
 const mainMenu = [
@@ -91,7 +94,9 @@ const createMenuItems = (confArray, classes, show) => {
   const result = confArray.map((iConf, index) => {
     return (
       <ListItem key={iConf.text} button classes={{ root: classes.listItem }}>
-        <ListItemIcon>{iConf.icon}</ListItemIcon>
+        <ListItemIcon classes={{ root: classes.listItemIcon }}>
+          {iConf.icon}
+        </ListItemIcon>
         <Fade in={show}>
           <ListItemText
             classes={{
