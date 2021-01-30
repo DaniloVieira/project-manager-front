@@ -20,10 +20,10 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: 'none',
     zIndex: theme.zIndex.drawer + 1,
   },
-  icons: {
-    paddingRight: theme.spacing(5),
-    paddingLeft: theme.spacing(6),
-  },
+  // icons: {
+  //   paddingRight: theme.spacing(5),
+  //   paddingLeft: theme.spacing(6),
+  // },
   rotate: {
     transition: theme.transitions.create(['transform'], {
       easing: theme.transitions.easing.sharp,
@@ -50,7 +50,6 @@ const AppTopBar = (props) => {
         <IconButton
           onClick={() => props.toggle()}
           edge='start'
-          className={classes.icons}
           aria-label='menu'
         >
           <MenuIcon
@@ -67,24 +66,23 @@ const AppTopBar = (props) => {
         <Switch
           value={props.darkMode}
           onChange={() => props.setDarkMode(!props.darkMode)}
-          className={classes.icons}
         />
-        <IconButton className={classes.icons}>
+        <IconButton>
           <VideoCall />
         </IconButton>
-        <IconButton className={classes.icons}>
+        <IconButton>
           <AppsIcon />
         </IconButton>
-        <IconButton className={classes.icons}>
+        <IconButton>
           <MoreVert />
         </IconButton>
-        <Button
-          startIcon={<AccountCircleIcon />}
+        <IconButton
           color='secondary'
           variant='outlined'
+          aria-label='add to shopping cart'
         >
-          Login
-        </Button>
+          <AccountCircleIcon />
+        </IconButton>
       </Toolbar>
     </AppBar>
   );

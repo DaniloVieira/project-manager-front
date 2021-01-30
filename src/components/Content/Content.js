@@ -1,7 +1,23 @@
 import React, { useState } from 'react';
-import { Box, Divider, Toolbar, Typography } from '@material-ui/core';
+import {
+  Box,
+  Divider,
+  Toolbar,
+  Typography,
+  makeStyles,
+} from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+  titleSection: {
+    margin: theme.spacing(2),
+  },
+  contentSection: {
+    margin: theme.spacing(2, 3),
+  },
+}));
 
 const Content = (props) => {
+  const classes = useStyles();
   const [title, setTitle] = useState('>>>Missing title<<<');
 
   const childrenWithProps = React.Children.map(props.children, (child) => {
@@ -14,13 +30,19 @@ const Content = (props) => {
   });
 
   return (
-    <Box p={8} style={{ backgroundColor: 'red' }}>
+    <Box p={4} style={{ width: '100%' }}>
       <Toolbar />
-      <Typography variant='h5' color='textPrimary' style={{ fontWeight: 600 }}>
-        {title}
-        <Divider />
-      </Typography>
-      {childrenWithProps}
+      <div className={classes.titleSection}>
+        <Typography
+          variant='h5'
+          color='textPrimary'
+          style={{ fontWeight: 600 }}
+        >
+          {title}
+        </Typography>
+      </div>
+      <Divider variant='middle' />
+      <div className={classes.contentSection}>{childrenWithProps}</div>
     </Box>
   );
 };

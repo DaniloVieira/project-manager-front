@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Grid, Box } from '@material-ui/core';
-
 import {
   LineChart,
   Line,
@@ -67,10 +66,12 @@ const Dashboard = (props) => {
   return (
     <Grid container spacing={4}>
       {/* {videos.map((item, index) => ( */}
-      <Grid item lg={3} md={4} sm={6} xs={12}>
+      <Grid item lg={6} md={6} sm={12} xs={12}>
         <Box style={{ border: '1px solid #d5d5d5' }}>
           <ResponsiveContainer width='100%' height={300}>
             <LineChart
+              // width={500}
+              // height={300}
               data={data}
               margin={{
                 top: 10,
@@ -100,10 +101,12 @@ const Dashboard = (props) => {
           </ResponsiveContainer>
         </Box>
       </Grid>
-      <Grid item lg={3} md={4} sm={6} xs={12}>
+      <Grid item lg={6} md={6} sm={12} xs={12}>
         <Box style={{ border: '1px solid #d5d5d5' }}>
           <ResponsiveContainer width='100%' height={300}>
             <BarChart
+              // width={500}
+              // height={300}
               data={data}
               margin={{
                 top: 10,

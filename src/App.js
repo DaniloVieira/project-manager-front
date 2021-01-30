@@ -13,16 +13,16 @@ function App() {
     spacing: 4,
     palette: {
       type: darkMode ? 'dark' : 'light',
-      primary: {
-        main: '#f44336',
-      },
-      secondary: {
-        main: '#3f51b5',
-      },
+      // primary: {
+      //   main: '#f44336',
+      // },
+      // secondary: {
+      //   main: '#3f51b5',
+      // },
       background: {
-        default: darkMode ? '#232323' : '#FFF',
+        default: darkMode ? '#232323' : '#e6e6e6',
         dark: darkMode ? '#181818' : '#f4f6f8',
-        paper: darkMode ? '#232323' : '#FFF',
+        paper: darkMode ? '#232323' : '#e6e6e6',
       },
     },
   });
