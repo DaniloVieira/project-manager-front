@@ -4,11 +4,12 @@ import { Typography, Grid, Box } from '@material-ui/core';
 import { videos } from '../../AuxData/Videos';
 
 const Videos = (props) => {
-  props.title('Videos');
+  //props.title('Videos');
+  console.log(videos);
   return (
     <Grid container spacing={4}>
       {videos.map((item, index) => (
-        <Grid item lg={3} md={4} sm={6} xs={12}>
+        <Grid key={item.id} item lg={3} md={4} sm={6} xs={12}>
           <Box>
             <img style={{ width: '100%' }} alt={item.title} src={item.thumb} />
             <Box>

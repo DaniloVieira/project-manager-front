@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
 import {
   makeStyles,
@@ -11,9 +12,10 @@ import {
   Divider,
   Fade,
 } from '@material-ui/core';
-import HomeIcon from '@material-ui/icons/Home';
-import WhatshotIcon from '@material-ui/icons/Whatshot';
-import SubscriptionsIcon from '@material-ui/icons/Subscriptions';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import AccountTreeIcon from '@material-ui/icons/AccountTree';
+import DynamicFeedIcon from '@material-ui/icons/DynamicFeed';
+import CodeIcon from '@material-ui/icons/Code';
 import VideoLibrary from '@material-ui/icons/VideoLibrary';
 import History from '@material-ui/icons/History';
 
@@ -62,20 +64,25 @@ const useStyles = makeStyles((theme) => ({
 
 const mainMenu = [
   {
-    icon: <HomeIcon />,
+    icon: <DashboardIcon />,
     text: 'Dashboard',
+    link: '/',
   },
   {
-    icon: <WhatshotIcon />,
+    id: 1,
+    icon: <AccountTreeIcon />,
     text: 'Manage project',
+    link: '/manage_projects',
   },
   {
-    icon: <SubscriptionsIcon />,
+    icon: <DynamicFeedIcon />,
     text: 'Projects',
+    link: '/projects',
   },
   {
-    icon: <SubscriptionsIcon />,
-    text: 'Activits',
+    icon: <CodeIcon />,
+    text: 'Activities',
+    link: '/activities',
   },
 ];
 
@@ -83,22 +90,31 @@ const secondMenu = [
   {
     icon: <VideoLibrary />,
     text: 'Library',
+    link: '/videos',
   },
   {
     icon: <History />,
     text: 'History',
+    link: '/',
   },
 ];
 
 const createMenuItems = (confArray, classes, show) => {
   const result = confArray.map((iConf, index) => {
     return (
-      <ListItem key={iConf.text} button classes={{ root: classes.listItem }}>
+      <ListItem
+        key={iConf.text}
+        button
+        classes={{ root: classes.listItem }}
+        component={NavLink}
+        to={iConf.link}
+      >
         <ListItemIcon classes={{ root: classes.listItemIcon }}>
           {iConf.icon}
         </ListItemIcon>
         <Fade in={show}>
           <ListItemText
+            ref={React.createRef()}
             classes={{
               primary: classes.listItemText,
             }}
@@ -116,6 +132,7 @@ const SideMenu = (props) => {
   console.log('[open]', props.open);
   return (
     <Drawer
+      ref={React.createRef()}
       variant='permanent'
       className={clsx(classes.drawer, {
         [classes.drawerOpen]: props.open,

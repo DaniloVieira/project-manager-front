@@ -22,15 +22,12 @@ const Layout = (props) => {
 
   return (
     <div className={classes.root}>
-      <AppTopBar open={open} toggle={handleDrawerToggle} {...props}></AppTopBar>
+      <AppTopBar open={open} toggle={handleDrawerToggle} {...props} />
       <Box display='flex'>
         {/* <Hidden mdDown> */}
-        <SideMenu open={open} {...props}></SideMenu>
+        <SideMenu open={open} {...props} />
         {/* </Hidden> */}
-        {/* <Box p={8}>
-          <Toolbar /> */}
         <Content>{props.children}</Content>
-        {/* </Box> */}
       </Box>
     </div>
   );

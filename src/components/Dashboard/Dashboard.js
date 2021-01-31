@@ -60,7 +60,7 @@ const data = [
 
 const Dashboard = (props) => {
   useEffect(() => {
-    props.title('Dashboard');
+    if (props.title) props.title('Dashboard');
   });
 
   return (
