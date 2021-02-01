@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Divider,
@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
 const Content = (props) => {
   const classes = useStyles();
   const [title, setTitle] = useState('>>>Missing title<<<');
+  // useEffect(() => {
+  //   alert('Content useefect');
+  // });
 
   const childrenWithProps = React.Children.map(props.children, (child) => {
     if (React.isValidElement(child)) {

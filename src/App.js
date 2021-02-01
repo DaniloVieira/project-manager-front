@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
+import { Route, Switch } from 'react-router-dom';
 
-import Home from './Home';
+// import Home from './Home';
 import Layout from './hoc/Layout/Layout';
 import Dashboard from './components/Dashboard/Dashboard';
-import Videos from './components/Dashboard/Videos';
+import Videos from './components/Videos/Videos';
+import Activity from './components/Activity/Activity';
+import Projects from './components/Projects/Projects';
+import ManageProjects from './components/ManageProjects/ManageProjects';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -31,8 +35,13 @@ function App() {
     <ThemeProvider theme={theme}>
       {/* <Home darkMode={darkMode} setDarkMode={setDarkMode}></Home> */}
       <Layout darkMode={darkMode} setDarkMode={setDarkMode}>
-        <Dashboard />
-        {/* <Videos /> */}
+        <Switch>
+          <Route path='/videos' component={Videos} />
+          <Route path='/activities' component={Activity} />
+          <Route path='/projects' component={Projects} />
+          <Route path='/manage_projects' component={ManageProjects} />
+          <Route path='/' component={Dashboard} />
+        </Switch>
       </Layout>
     </ThemeProvider>
   );
