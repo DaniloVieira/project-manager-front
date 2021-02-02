@@ -33,7 +33,7 @@ const Content = (props) => {
   });
 
   return (
-    <Box p={4} style={{ width: '100%' }}>
+    <Box p={4} style={{ width: '100%', overflowY: 'scroll' }}>
       <Toolbar />
       <div className={classes.titleSection}>
         <Typography
