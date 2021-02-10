@@ -129,7 +129,6 @@ const createMenuItems = (confArray, classes, show) => {
 
 const SideMenu = (props) => {
   const classes = useStyles();
-  console.log('[open]', props.open);
   return (
     <Drawer
       ref={React.createRef()}
