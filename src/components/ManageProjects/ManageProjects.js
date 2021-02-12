@@ -8,8 +8,8 @@ import { Contributors } from '../../AuxData/Contributors';
 import { rows } from '../../AuxData/ProjectResultData';
 
 const ManageProjects = (props) => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [filters, setFilters] = useState({
     clientName: 'name',
     contributorId: null,
@@ -23,7 +23,6 @@ const ManageProjects = (props) => {
       ...filters,
       [identifier]: value,
     });
-    console.log(filters);
   };
 
   return (

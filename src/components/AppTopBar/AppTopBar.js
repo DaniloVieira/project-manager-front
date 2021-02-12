@@ -43,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
 
 const AppTopBar = (props) => {
   const classes = useStyles();
-  console.log('[AppTopBar]', props);
   return (
     <AppBar color='inherit' position='fixed' className={classes.appBar}>
       <Toolbar>

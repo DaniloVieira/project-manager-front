@@ -4,8 +4,6 @@ import { Typography, Grid, Box } from '@material-ui/core';
 import { videos } from '../../AuxData/Videos';
 
 const Videos = (props) => {
-  //props.title('Videos');
-  console.log(videos);
   return (
     <Grid container spacing={4}>
       {videos.map((item, index) => (

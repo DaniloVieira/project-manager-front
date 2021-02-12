@@ -189,10 +189,6 @@ const Form = (props) => {
                 label='Contributors'
                 fullWidth
                 size='small'
-                // onChange={(event) => {
-                //   console.log(event.target.value);
-                //   return internalhandleChange(event, 'contributorId');
-                // }}
               />
             )}
           />

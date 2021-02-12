@@ -6,7 +6,7 @@ import { Route, Switch } from 'react-router-dom';
 import Layout from './hoc/Layout/Layout';
 import Dashboard from './components/Dashboard/Dashboard';
 import Videos from './components/Videos/Videos';
-import Activity from './components/Activity/Activity';
+import Activities from './components/Activity/Activities';
 import Projects from './components/Projects/Projects';
 import ManageProjects from './components/ManageProjects/ManageProjects';
 
@@ -37,7 +37,7 @@ function App() {
       <Layout darkMode={darkMode} setDarkMode={setDarkMode}>
         <Switch>
           <Route path='/videos' component={Videos} />
-          <Route path='/activities' component={Activity} />
+          <Route path='/activities' component={Activities} />
           <Route path='/projects' component={Projects} />
           <Route path='/manage_projects' component={ManageProjects} />
           <Route path='/' component={Dashboard} />
