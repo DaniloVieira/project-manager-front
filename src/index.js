@@ -3,13 +3,33 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import { CssBaseline } from '@material-ui/core';
 import { BrowserRouter } from 'react-router-dom';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import createSagaMiddleware from 'redux-saga';
 import reportWebVitals from './reportWebVitals';
+import reducer from './store/reducers/reducer';
+import auth from './store/reducers/auth';
+import exampleReducer from './store/reducers/exampleReducer';
+import rootSaga from './sagas/sagas';
+
+const rootReducer = combineReducers({
+  reducer,
+  auth,
+  exampleReducer,
+});
+
+const sagaMiddleware = createSagaMiddleware();
+
+const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
+sagaMiddleware.run(rootSaga);
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <CssBaseline />
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')

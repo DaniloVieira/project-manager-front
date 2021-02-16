@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../../store/actions/actions';
 
 const Projects = (props) => {
-  return <div>My Projects</div>;
+  useEffect(() => {
+    props.setTitleOnLoad('Projects');
+  });
+  return <div>To be implemented!!!</div>;
 };
 
-export default Projects;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setTitleOnLoad: (t) => dispatch(actions.setTitle(t)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Projects);

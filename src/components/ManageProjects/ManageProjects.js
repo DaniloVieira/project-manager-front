@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { Grid } from '@material-ui/core';
+import * as actionTypes from '../../store/actionTypes';
 import Form from './Form';
 import ProjectTable from './ProjectTable';
 
@@ -25,6 +27,10 @@ const ManageProjects = (props) => {
     });
   };
 
+  useEffect(() => {
+    props.setTitleOnLoad('Manage Projects');
+  });
+
   return (
     <Grid
       container
@@ -49,4 +55,10 @@ const ManageProjects = (props) => {
   );
 };
 
-export default ManageProjects;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setTitleOnLoad: (t) => dispatch({ type: actionTypes.SET_TITLE, title: t }),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(ManageProjects);

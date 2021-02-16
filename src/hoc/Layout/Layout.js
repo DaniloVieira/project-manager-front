@@ -19,7 +19,6 @@ const Layout = (props) => {
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
-
   return (
     <div className={classes.root}>
       <AppTopBar open={open} toggle={handleDrawerToggle} {...props} />
