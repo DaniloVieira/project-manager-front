@@ -1,29 +1,18 @@
-import React, { useState, Fragment } from 'react';
+import React, { useEffect, useState, useCallback, Fragment } from 'react';
 import {
   makeStyles,
   Grid,
   TextField,
   Typography,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Paper,
-  TableFooter,
-  TablePagination,
-  IconButton,
   Fab,
 } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
-import TablePaginationActions from '../../Shared/Components/TablePagination/TablePagination';
+import ActivitiesTable from './ActivitiesTable';
 import DeleteDialog from '../../Shared/Components/DeleteDialog/DeleteDialog';
 import ActivityFormDialog from './ActivityFormDialog';
 
-import { Activities as rows } from '../../AuxData/Activities';
+import { fetchActivitiesData, fetchProjectDomain } from '../../services';
 
 const useStyles = makeStyles((theme) => ({
   position: {
@@ -38,6 +27,18 @@ const useStyles = makeStyles((theme) => ({
 
 const Activities = (props) => {
   const classes = useStyles();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [onloadError, setOnloadError] = useState(false);
+  const [contributorId, setContributorId] = useState(1);
+  const [rows, setRows] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [openDeleteDiag, setOpenDeleteDiag] = useState(false);
+  const [openFormDiag, setOpenFormDiag] = useState(false);
+  const [selectedValue, setSelectedValue] = useState('test');
+  const [projetctId, setProjectId] = useState(undefined);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [disabled, setDisabled] = useState(true);
   const [activity, setActivity] = useState({
     id: null,
     description: null,
@@ -45,27 +46,59 @@ const Activities = (props) => {
     dtStart: null,
     dtEnd: null,
   });
-  const [openDeleteDiag, setOpenDeleteDiag] = useState(false);
-  const [openFormDiag, setOpenFormDiag] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('test');
-  const [projetctId, setProjectId] = useState(0);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedProject, setSelectedProject] = useState({
     description: 'Descrition',
     clientName: 'Client Name',
     dtExpectedCompletion: 'Conclusion Date',
   });
-  const selectChangeHandler = (value) => {
-    // props.inputChangeHandler(value, identifier);
+
+  const errorSnackbar = useCallback(() => {
+    const result = enqueueSnackbar('Error on load records', {
+      variant: 'error',
+    });
+    setOnloadError(result ? true : false);
+  }, [enqueueSnackbar]);
+
+  useEffect(() => {
+    if (!onloadError) {
+      fetchProjectDomain(
+        (resp) => {
+          const projectsData = resp.data;
+          setProjects(projectsData);
+          setProjectId(projectsData[0].value);
+          if (projectsData.length > 1) {
+            setDisabled(false);
+          }
+        },
+        errorSnackbar,
+        contributorId
+      );
+    }
+  }, [onloadError, contributorId, errorSnackbar]);
+
+  useEffect(() => {
+    fetchActivitiesData(
+      (resp) => {
+        setRows(resp.data.value);
+      },
+      errorSnackbar,
+      projetctId,
+      page + 1,
+      pageSize,
+      contributorId
+    );
+  }, [projetctId, page, pageSize, contributorId, errorSnackbar]);
+
+  const selectChangeHandler = (event) => {
+    setProjectId(event.target.value);
   };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+  const handleChangePageSize = (event) => {
+    setPageSize(parseInt(event.target.value, 10));
     setPage(0);
   };
 
@@ -107,13 +140,14 @@ const Activities = (props) => {
               fullWidth
               size='small'
               value={projetctId}
-              onChange={(event) => selectChangeHandler(event.target.value)}
+              onChange={(event) => selectChangeHandler(event)}
+              disabled={disabled}
               SelectProps={{
                 native: true,
               }}
             >
-              {rows.map((option) => (
-                <option key={option.id} value={option.value}>
+              {projects.map((option) => (
+                <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
@@ -151,68 +185,15 @@ const Activities = (props) => {
         </Grid>
 
         <Grid item container xs={12}>
-          <TableContainer component={Paper}>
-            <Table aria-label='Projects table' size='small'>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Description</TableCell>
-                  <TableCell>Details</TableCell>
-                  <TableCell align='right'>Start</TableCell>
-                  <TableCell align='right'>End</TableCell>
-                  <TableCell align='center'>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell component='th' scope='row'>
-                      {row.description}
-                    </TableCell>
-                    <TableCell>{row.details}</TableCell>
-                    <TableCell align='right'>{row.dtStart}</TableCell>
-                    <TableCell align='right'>{row.dtEnd}</TableCell>
-                    <TableCell align='center'>
-                      <IconButton
-                        onClick={onClickEditHandler}
-                        aria-label='edit'
-                      >
-                        <EditIcon aria-label='edit' />
-                      </IconButton>
-                      <IconButton
-                        onClick={onClickDeleteHandler}
-                        aria-label='delete'
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TablePagination
-                    rowsPerPageOptions={[
-                      5,
-                      10,
-                      25,
-                      { label: 'All', value: -1 },
-                    ]}
-                    colSpan={3}
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    SelectProps={{
-                      inputProps: { 'aria-label': 'rows per page' },
-                      native: true,
-                    }}
-                    onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                    ActionsComponent={TablePaginationActions}
-                  />
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </TableContainer>
+          <ActivitiesTable
+            rows={rows}
+            onClickEditHandler={onClickEditHandler}
+            onClickDeleteHandler={onClickDeleteHandler}
+            page={page}
+            pageSize={pageSize}
+            handleChangePage={handleChangePage}
+            handleChangePageSize={handleChangePageSize}
+          />
         </Grid>
       </Grid>
       <DeleteDialog
