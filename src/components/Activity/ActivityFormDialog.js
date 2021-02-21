@@ -6,16 +6,11 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
 } from '@material-ui/core';
 
 const ActivityFormDialog = (props) => {
   const { onClose, open, inputChangeHandler, activity, onSubmitSave } = props;
-
-  //   const handleClickOpen = () => {
-  //     onClose(true);
-  //   };
 
   const handleClose = () => {
     onClose();
@@ -26,7 +21,6 @@ const ActivityFormDialog = (props) => {
   };
 
   const onSubmit = () => {
-    console.log('save');
     onSubmitSave();
   };
 
