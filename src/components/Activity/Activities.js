@@ -5,6 +5,12 @@ import {
   TextField,
   Typography,
   Fab,
+  Backdrop,
+  CircularProgress,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/Add';
@@ -12,7 +18,14 @@ import ActivitiesTable from './ActivitiesTable';
 import DeleteDialog from '../../Shared/Components/DeleteDialog/DeleteDialog';
 import ActivityFormDialog from './ActivityFormDialog';
 
-import { fetchActivitiesData, fetchProjectDomain } from '../../services';
+import {
+  fetchActivitiesData,
+  fetchProjectDomain,
+  fetchProjectById,
+  saveActivity,
+  fetchActivityById,
+  deleteActivityById,
+} from '../../services';
 
 const useStyles = makeStyles((theme) => ({
   position: {
@@ -23,33 +36,36 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(12),
     left: theme.spacing(12),
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: '100%',
+  },
 }));
 
+const contributorId = 4;
 const Activities = (props) => {
   const classes = useStyles();
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   const [onloadError, setOnloadError] = useState(false);
-  const [contributorId, setContributorId] = useState(1);
+  const [backDrop, setBackDrop] = useState(false);
   const [rows, setRows] = useState([]);
   const [projects, setProjects] = useState([]);
   const [openDeleteDiag, setOpenDeleteDiag] = useState(false);
   const [openFormDiag, setOpenFormDiag] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('test');
-  const [projetctId, setProjectId] = useState(undefined);
+  const [selectedValue, setSelectedValue] = useState(null);
+  const [projectId, setProjectId] = useState(undefined);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [disabled, setDisabled] = useState(true);
-  const [activity, setActivity] = useState({
-    id: null,
-    description: null,
-    details: null,
-    dtStart: null,
-    dtEnd: null,
-  });
+  const [activity, setActivity] = useState(null);
   const [selectedProject, setSelectedProject] = useState({
-    description: 'Descrition',
-    clientName: 'Client Name',
-    dtExpectedCompletion: 'Conclusion Date',
+    description: '',
+    clientName: '',
+    dtExpectedCompletion: '',
   });
 
   const errorSnackbar = useCallback(() => {
@@ -57,16 +73,32 @@ const Activities = (props) => {
       variant: 'error',
     });
     setOnloadError(result ? true : false);
+    setBackDrop(false);
   }, [enqueueSnackbar]);
+
+  const fetchActivities = useCallback(() => {
+    setBackDrop(true);
+    fetchActivitiesData(
+      (resp) => {
+        setRows(resp.data.value);
+        setBackDrop(false);
+      },
+      errorSnackbar,
+      projectId,
+      contributorId,
+      page + 1,
+      pageSize
+    );
+  }, [errorSnackbar, projectId, page, pageSize]);
 
   useEffect(() => {
     if (!onloadError) {
       fetchProjectDomain(
         (resp) => {
-          const projectsData = resp.data;
-          setProjects(projectsData);
-          setProjectId(projectsData[0].value);
-          if (projectsData.length > 1) {
+          const projectsDomain = resp.data;
+          setProjects(projectsDomain);
+          setProjectId(projectsDomain[0].value);
+          if (projectsDomain.length > 1) {
             setDisabled(false);
           }
         },
@@ -74,20 +106,24 @@ const Activities = (props) => {
         contributorId
       );
     }
-  }, [onloadError, contributorId, errorSnackbar]);
+  }, [onloadError, errorSnackbar]);
 
   useEffect(() => {
-    fetchActivitiesData(
-      (resp) => {
-        setRows(resp.data.value);
-      },
-      errorSnackbar,
-      projetctId,
-      page + 1,
-      pageSize,
-      contributorId
-    );
-  }, [projetctId, page, pageSize, contributorId, errorSnackbar]);
+    if (projectId) {
+      fetchProjectById(
+        (resp) => {
+          const projectData = resp.data.value;
+          setSelectedProject(projectData);
+        },
+        errorSnackbar,
+        projectId
+      );
+    }
+  }, [projectId, errorSnackbar]);
+
+  useEffect(() => {
+    fetchActivities();
+  }, [fetchActivities]);
 
   const selectChangeHandler = (event) => {
     setProjectId(event.target.value);
@@ -104,28 +140,98 @@ const Activities = (props) => {
 
   const handleCloseDeleteDiag = (value) => {
     setOpenDeleteDiag(false);
-    setSelectedValue(value);
+    setSelectedValue(null);
   };
 
-  const onClickDeleteHandler = () => {
+  const handleConfirmDeleteDiag = (value) => {
+    deleteActivityById(
+      (resp) => {
+        fetchActivities();
+        setOpenDeleteDiag(false);
+        setSelectedValue(null);
+        enqueueSnackbar(resp.data.message, {
+          variant: 'success',
+        });
+      },
+      errorSnackbar,
+      selectedValue
+    );
+  };
+
+  const onClickDeleteHandler = (id) => {
     setOpenDeleteDiag(true);
+    setSelectedValue(id);
   };
 
   const onClickPlusHandler = () => {
+    setActivity({
+      id: null,
+      description: '',
+      details: '',
+      dtStart: null,
+      dtEnd: null,
+      userId: contributorId,
+      projectId: projectId,
+    });
     setOpenFormDiag(true);
   };
 
   const handleCloseFormDiag = (value) => {
     setOpenFormDiag(false);
+    setActivity(null);
   };
 
-  const onClickEditHandler = () => {
-    setOpenFormDiag(true);
+  const onClickEditHandler = (id) => {
+    fetchActivityById(
+      (resp) => {
+        const selected = resp.data.value;
+        setActivity({
+          ...selected,
+        });
+        setOpenFormDiag(true);
+      },
+      errorSnackbar,
+      id
+    );
+  };
+
+  const formInputChangeHandler = (value, identifier) => {
+    setActivity({ ...activity, [identifier]: value });
   };
 
   const onSaveActivityHandler = () => {
-    setOpenFormDiag(false);
+    setBackDrop(true);
+    saveActivity(
+      (resp) => {
+        fetchActivities();
+        setOpenFormDiag(false);
+        setActivity(null);
+        setBackDrop(false);
+        enqueueSnackbar(resp.data.message, {
+          variant: 'success',
+        });
+      },
+      (err) => {
+        setBackDrop(false);
+        enqueueSnackbar(err, {
+          variant: 'danger',
+        });
+      },
+      {
+        ...activity,
+      }
+    );
   };
+
+  const projectInfo = (label, value) => (
+    <Typography
+      variant='body1'
+      className={classes.position}
+      color='textPrimary'
+    >
+      {label}: {value}
+    </Typography>
+  );
 
   return (
     <Fragment>
@@ -139,7 +245,7 @@ const Activities = (props) => {
               margin='dense'
               fullWidth
               size='small'
-              value={projetctId}
+              value={projectId}
               onChange={(event) => selectChangeHandler(event)}
               disabled={disabled}
               SelectProps={{
@@ -152,24 +258,40 @@ const Activities = (props) => {
                 </option>
               ))}
             </TextField>
+            {/* <FormControl className={classes.formControl}>
+              <InputLabel id='project-id-select-label'>Project</InputLabel>
+              <Select
+                labelId='project-id-select-label'
+                id='project-id'
+                margin='dense'
+                fullWidth
+                size='small'
+                value={projectId}
+                onChange={selectChangeHandler}
+                // disabled={disabled}
+                inputProps={{
+                  inputRef: (ref) => {
+                    if (!ref) return;
+                    register({
+                      name: "trinityPerson",
+                      value: ref.value,
+                    });
+                  },
+                }}
+              >
+                {projects.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl> */}
           </Grid>
           <Grid item xs={4}>
-            <Typography
-              variant='body1'
-              className={classes.position}
-              color='textPrimary'
-            >
-              {selectedProject.clientName}
-            </Typography>
+            {projectInfo('Client', selectedProject.clientName)}
           </Grid>
           <Grid item xs={4}>
-            <Typography
-              variant='body1'
-              className={classes.position}
-              color='textPrimary'
-            >
-              {selectedProject.dtExpectedCompletion}
-            </Typography>
+            {projectInfo('Completion', selectedProject.dtExpectedCompletion)}
           </Grid>
           <Grid item xs={1}>
             <Fab
@@ -183,30 +305,37 @@ const Activities = (props) => {
             </Fab>
           </Grid>
         </Grid>
-
         <Grid item container xs={12}>
-          <ActivitiesTable
-            rows={rows}
-            onClickEditHandler={onClickEditHandler}
-            onClickDeleteHandler={onClickDeleteHandler}
-            page={page}
-            pageSize={pageSize}
-            handleChangePage={handleChangePage}
-            handleChangePageSize={handleChangePageSize}
-          />
+          {backDrop ? null : (
+            <ActivitiesTable
+              rows={rows}
+              onClickEditHandler={onClickEditHandler}
+              onClickDeleteHandler={onClickDeleteHandler}
+              page={page}
+              pageSize={pageSize}
+              handleChangePage={handleChangePage}
+              handleChangePageSize={handleChangePageSize}
+            />
+          )}
         </Grid>
       </Grid>
       <DeleteDialog
         open={openDeleteDiag}
-        selectedValue={selectedValue}
-        onClose={handleCloseDeleteDiag}
+        onCancel={handleCloseDeleteDiag}
+        onConfirm={handleConfirmDeleteDiag}
       />
-      <ActivityFormDialog
-        activity={activity}
-        open={openFormDiag}
-        onClose={handleCloseFormDiag}
-        onSubmitSave={onSaveActivityHandler}
-      />
+      {activity ? (
+        <ActivityFormDialog
+          activity={activity}
+          open={openFormDiag}
+          onClose={handleCloseFormDiag}
+          onSubmitSave={onSaveActivityHandler}
+          inputChangeHandler={formInputChangeHandler}
+        />
+      ) : null}
+      <Backdrop className={classes.backdrop} open={backDrop}>
+        <CircularProgress color='inherit' />
+      </Backdrop>
     </Fragment>
   );
 };

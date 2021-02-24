@@ -1,2 +1,7 @@
-export { fetchProjectDomain } from './ProjectService';
-export { fetchActivitiesData } from './ActivitiesService';
+export { fetchProjectDomain, fetchProjectById } from './ProjectService';
+export {
+  fetchActivitiesData,
+  saveActivity,
+  fetchActivityById,
+  deleteActivityById,
+} from './ActivitiesService';
