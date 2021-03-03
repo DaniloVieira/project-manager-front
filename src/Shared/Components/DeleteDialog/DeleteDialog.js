@@ -12,19 +12,23 @@ import {
 import Alert from '@material-ui/lab/Alert';
 
 const DeleteDialog = (props) => {
-  const { onClose, selectedValue, open } = props;
+  const { onCancel, onConfirm, selectedValue, open } = props;
 
-  const handleClose = () => {
-    onClose(selectedValue);
+  // const handleClose = () => {
+  //   onClose(selectedValue);
+  // };
+
+  const handleCancelClick = (value) => {
+    onCancel(value);
   };
 
-  const handleListItemClick = (value) => {
-    onClose(value);
+  const handleConfirmClick = (value) => {
+    onConfirm(value);
   };
 
   return (
     <Dialog
-      onClose={handleClose}
+      // onClose={handleClose}
       aria-labelledby='simple-dialog-title'
       open={open}
     >
@@ -59,17 +63,17 @@ const DeleteDialog = (props) => {
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={() => handleListItemClick('addAccount')}
-          variant='contained'
-          color='secondary'
+          onClick={() => handleConfirmClick(selectedValue)}
+          // variant='contained'
+          color='primary'
           size='small'
         >
-          DELETE
+          CONFIRM
         </Button>
         <Button
-          onClick={() => handleListItemClick('addAccount')}
-          variant='contained'
-          color='primary'
+          onClick={() => handleCancelClick(selectedValue)}
+          // variant='contained'
+          color='secondary'
           size='small'
           autoFocus
         >

@@ -14,3 +14,14 @@ export const fetchProjectDomain = (func, errMsg, contributorId) => {
       errMsg(err);
     });
 };
+
+export const fetchProjectById = (func, errMsg, projetctId) => {
+  axios
+    .get(`${deafultHost}/${project}/${projetctId}`)
+    .then((resp) => {
+      func(resp);
+    })
+    .catch((err) => {
+      errMsg(err);
+    });
+};
