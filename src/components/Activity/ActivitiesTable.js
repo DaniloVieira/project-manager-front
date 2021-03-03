@@ -26,11 +26,9 @@ const ActivitiesTable = (props) => {
     handleChangePage,
     handleChangePageSize,
   } = props;
-  console.log('[ActivitiesTable - rows]', rows);
-
   const table = (
     <TableContainer component={Paper}>
-      <Table aria-label='Projects table' size='small'>
+      <Table aria-label='Projects table' size='small' density='compact'>
         <TableHead>
           <TableRow>
             <TableCell>Description</TableCell>
@@ -50,10 +48,16 @@ const ActivitiesTable = (props) => {
               <TableCell align='right'>{row.dtStart}</TableCell>
               <TableCell align='right'>{row.dtEnd}</TableCell>
               <TableCell align='center'>
-                <IconButton onClick={onClickEditHandler} aria-label='edit'>
+                <IconButton
+                  onClick={() => onClickEditHandler(row.id)}
+                  aria-label='edit'
+                >
                   <EditIcon aria-label='edit' />
                 </IconButton>
-                <IconButton onClick={onClickDeleteHandler} aria-label='delete'>
+                <IconButton
+                  onClick={() => onClickDeleteHandler(row.id)}
+                  aria-label='delete'
+                >
                   <DeleteIcon />
                 </IconButton>
               </TableCell>

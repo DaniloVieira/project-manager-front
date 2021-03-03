@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
 import { Route, Switch } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import enLocale from 'date-fns/locale/en-US';
+import DateFnsUtils from '@date-io/date-fns';
 
 // import Home from './Home';
 import Layout from './hoc/Layout/Layout';
@@ -34,17 +37,19 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <SnackbarProvider maxSnack={3} preventDuplicate>
-        <Layout darkMode={darkMode} setDarkMode={setDarkMode}>
-          <Switch>
-            <Route path='/videos' component={Videos} />
-            <Route path='/activities' component={Activities} />
-            <Route path='/projects' component={Projects} />
-            <Route path='/manage_projects' component={ManageProjects} />
-            <Route path='/' component={Dashboard} />
-          </Switch>
-        </Layout>
-      </SnackbarProvider>
+      <MuiPickersUtilsProvider utils={DateFnsUtils} locale={enLocale}>
+        <SnackbarProvider maxSnack={3} preventDuplicate>
+          <Layout darkMode={darkMode} setDarkMode={setDarkMode}>
+            <Switch>
+              <Route path='/videos' component={Videos} />
+              <Route path='/activities' component={Activities} />
+              <Route path='/projects' component={Projects} />
+              <Route path='/manage_projects' component={ManageProjects} />
+              <Route path='/' component={Dashboard} />
+            </Switch>
+          </Layout>
+        </SnackbarProvider>
+      </MuiPickersUtilsProvider>
       {/* <Home darkMode={darkMode} setDarkMode={setDarkMode}></Home> */}
     </ThemeProvider>
   );

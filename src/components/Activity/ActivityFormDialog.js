@@ -8,6 +8,8 @@ import {
   DialogContent,
   DialogTitle,
 } from '@material-ui/core';
+import { KeyboardDateTimePicker } from '@material-ui/pickers';
+import { format } from 'date-fns';
 
 const ActivityFormDialog = (props) => {
   const { onClose, open, inputChangeHandler, activity, onSubmitSave } = props;
@@ -20,9 +22,25 @@ const ActivityFormDialog = (props) => {
     inputChangeHandler(value, identifier);
   };
 
-  const onSubmit = () => {
+  const onSubmit = (event) => {
+    event.preventDefault();
     onSubmitSave();
   };
+
+  const dtPicker = (dtLabel, dtStyle, identifier) => (
+    <KeyboardDateTimePicker
+      autoOk
+      label={dtLabel}
+      value={activity[identifier]}
+      style={dtStyle}
+      format='MM/dd/yyyy HH:mm'
+      ampm={false}
+      onError={console.log}
+      onChange={(value) => {
+        internalhandleChange(format(value, 'yyyy-MM-dd HH:mm:ss'), identifier);
+      }}
+    />
+  );
 
   return (
     <Dialog
@@ -36,7 +54,7 @@ const ActivityFormDialog = (props) => {
       <form noValidate autoComplete='off' onSubmit={onSubmit}>
         <DialogContent>
           <Grid container spacing={4}>
-            <Grid item xs={8}>
+            <Grid item xs={6}>
               <TextField
                 id='activity-desc'
                 label='Description'
@@ -44,47 +62,21 @@ const ActivityFormDialog = (props) => {
                 fullWidth
                 size='small'
                 value={activity['description']}
-                onChange={(event) =>
-                  internalhandleChange(event.target.value, 'description')
-                }
+                onChange={(event) => {
+                  internalhandleChange(event.target.value, 'description');
+                }}
               />
             </Grid>
-            <Grid item xs={4} container justify='flex-end'>
+            <Grid item xs={6} container justify='flex-end'>
               <Grid item xs={6}>
-                <TextField
-                  id='dt-start-acvity'
-                  label='Start'
-                  margin='dense'
-                  fullWidth
-                  size='small'
-                  value={activity['dtStart']}
-                  initialDtCreationonChange={(event) =>
-                    internalhandleChange(event.target.value, 'dtStart')
-                  }
-                  type='date'
-                  style={{ paddingRight: 10 }}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
+                {dtPicker(
+                  'Start',
+                  { paddingRight: 10, paddingTop: 6 },
+                  'dtStart'
+                )}
               </Grid>
               <Grid item xs={6}>
-                <TextField
-                  id='dt-end-activity'
-                  label='End'
-                  margin='dense'
-                  fullWidth
-                  size='small'
-                  value={activity['dtEnd']}
-                  onChange={(event) =>
-                    internalhandleChange(event.target.value, 'dtEnd')
-                  }
-                  type='date'
-                  style={{ paddingLeft: 10 }}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
+                {dtPicker('End', { paddingLeft: 10, paddingTop: 6 }, 'dtEnd')}
               </Grid>
             </Grid>
             <Grid item xs={12}>
@@ -96,7 +88,7 @@ const ActivityFormDialog = (props) => {
                 rows={5}
                 defaultValue={activity['details']}
                 onChange={(event) =>
-                  internalhandleChange(event.target.value, 'description')
+                  internalhandleChange(event.target.value, 'details')
                 }
                 multiline
               />
