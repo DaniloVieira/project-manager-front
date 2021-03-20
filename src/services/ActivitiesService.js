@@ -1,6 +1,8 @@
-import axios from 'axios';
+// import axios from 'axios';
+import axios from './AxiosService';
 
-const deafultHost = 'http://localhost:8080/project-management-backend';
+// const serviceUri = 'http://localhost:8080/project-management-backend';
+const serviceUri = '';
 
 const endpoint = 'activity';
 
@@ -13,7 +15,7 @@ export const fetchActivitiesData = (
   pageSize
 ) => {
   axios
-    .get(`${deafultHost}/${endpoint}/list`, {
+    .get(`${serviceUri}/${endpoint}/list`, {
       params: { projectId, contributorId, page, pageSize },
     })
     .then((resp) => {
@@ -26,7 +28,7 @@ export const fetchActivitiesData = (
 
 export const saveActivity = (func, errMsg, activity) => {
   axios
-    .post(`${deafultHost}/${endpoint}/save`, activity)
+    .post(`${serviceUri}/${endpoint}/save`, activity)
     .then((resp) => {
       func(resp);
     })
@@ -37,7 +39,7 @@ export const saveActivity = (func, errMsg, activity) => {
 
 export const fetchActivityById = (func, errMsg, Id) => {
   axios
-    .get(`${deafultHost}/${endpoint}/${Id}`)
+    .get(`${serviceUri}/${endpoint}/${Id}`)
     .then((resp) => {
       func(resp);
     })
@@ -48,7 +50,7 @@ export const fetchActivityById = (func, errMsg, Id) => {
 
 export const deleteActivityById = (func, errMsg, Id) => {
   axios
-    .delete(`${deafultHost}/${endpoint}/${Id}`)
+    .delete(`${serviceUri}/${endpoint}/${Id}`)
     .then((resp) => {
       func(resp);
     })

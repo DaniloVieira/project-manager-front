@@ -1,12 +1,14 @@
-import axios from 'axios';
+// import axios from 'axios';
+import axios from './AxiosService';
 
-const deafultHost = 'http://localhost:8080/project-management-backend';
+// const serviceUri = 'http://localhost:8080/project-management-backend';
+const serviceUri = '';
 
 const project = 'project';
 
 export const fetchProjectDomain = (func, errMsg, contributorId) => {
   axios
-    .get(`${deafultHost}/${project}/domain/${contributorId}`)
+    .get(`${serviceUri}/${project}/domain/${contributorId}`)
     .then((resp) => {
       func(resp);
     })
@@ -17,7 +19,7 @@ export const fetchProjectDomain = (func, errMsg, contributorId) => {
 
 export const fetchProjectById = (func, errMsg, projetctId) => {
   axios
-    .get(`${deafultHost}/${project}/${projetctId}`)
+    .get(`${serviceUri}/${project}/${projetctId}`)
     .then((resp) => {
       func(resp);
     })
