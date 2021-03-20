@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import {
   Box,
   Divider,
@@ -18,19 +19,18 @@ const useStyles = makeStyles((theme) => ({
 
 const Content = (props) => {
   const classes = useStyles();
-  const [title, setTitle] = useState('>>>Missing title<<<');
-  // useEffect(() => {
-  //   alert('Content useefect');
-  // });
+  // const [title, setTitle] = useState('>>>Missing title<<<');
 
-  const childrenWithProps = React.Children.map(props.children, (child) => {
-    if (React.isValidElement(child)) {
-      return React.cloneElement(child, {
-        title: (t) => setTitle(t),
-      });
-    }
-    return child;
-  });
+  // const setTheTitle = (t) => setTitle(t);
+
+  // const childrenWithProps = React.Children.map(props.children, (child) => {
+  //   if (React.isValidElement(child)) {
+  //     return React.cloneElement(child, {
+  //       titleSet: setTheTitle,
+  //     });
+  //   }
+  //   return child;
+  // });
 
   return (
     <Box p={4} style={{ width: '100%', overflowY: 'scroll' }}>
@@ -41,13 +41,20 @@ const Content = (props) => {
           color='textPrimary'
           style={{ fontWeight: 600 }}
         >
-          {title}
+          {props.title}
         </Typography>
       </div>
       <Divider variant='middle' />
-      <div className={classes.contentSection}>{childrenWithProps}</div>
+      {/* <div className={classes.contentSection}>{childrenWithProps}</div> */}
+      <div className={classes.contentSection}>{props.children}</div>
     </Box>
   );
 };
 
-export default Content;
+const mapStateToProps = (state) => {
+  return {
+    title: state.reducer.title,
+  };
+};
+
+export default connect(mapStateToProps)(Content);

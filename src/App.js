@@ -13,6 +13,7 @@ import Videos from './components/Videos/Videos';
 import Activities from './components/Activity/Activities';
 import Projects from './components/Projects/Projects';
 import ManageProjects from './components/ManageProjects/ManageProjects';
+import Examples from './components/Example/Example';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -45,6 +46,7 @@ function App() {
               <Route path='/activities' component={Activities} />
               <Route path='/projects' component={Projects} />
               <Route path='/manage_projects' component={ManageProjects} />
+              <Route path='/examples' component={Examples} />
               <Route path='/' component={Dashboard} />
             </Switch>
           </Layout>

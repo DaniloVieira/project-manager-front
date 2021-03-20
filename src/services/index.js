@@ -1,3 +1,4 @@
+export { fetchUserById } from './UserService';
 export { fetchProjectDomain, fetchProjectById } from './ProjectService';
 export {
   fetchActivitiesData,
