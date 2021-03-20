@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useCallback, Fragment } from 'react';
+import React, { useState, Fragment, useEffect, useCallback } from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../../store/actions/actions';
 import {
   makeStyles,
   Grid,
@@ -11,6 +13,7 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Container,
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/Add';
@@ -33,8 +36,8 @@ const useStyles = makeStyles((theme) => ({
   },
   fab: {
     position: 'relative',
-    top: theme.spacing(12),
-    left: theme.spacing(12),
+    top: theme.spacing(6),
+    left: theme.spacing(0),
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
@@ -46,8 +49,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const contributorId = 4;
 const Activities = (props) => {
+  const contributorId = props.userId;
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [onloadError, setOnloadError] = useState(false);
@@ -77,19 +80,21 @@ const Activities = (props) => {
   }, [enqueueSnackbar]);
 
   const fetchActivities = useCallback(() => {
-    setBackDrop(true);
-    fetchActivitiesData(
-      (resp) => {
-        setRows(resp.data.value);
-        setBackDrop(false);
-      },
-      errorSnackbar,
-      projectId,
-      contributorId,
-      page + 1,
-      pageSize
-    );
-  }, [errorSnackbar, projectId, page, pageSize]);
+    if (projectId) {
+      setBackDrop(true);
+      fetchActivitiesData(
+        (resp) => {
+          setRows(resp.data.value);
+          setBackDrop(false);
+        },
+        errorSnackbar,
+        projectId,
+        contributorId,
+        page + 1,
+        pageSize
+      );
+    }
+  }, [errorSnackbar, projectId, page, pageSize, contributorId]);
 
   useEffect(() => {
     if (!onloadError) {
@@ -97,16 +102,16 @@ const Activities = (props) => {
         (resp) => {
           const projectsDomain = resp.data;
           setProjects(projectsDomain);
-          setProjectId(projectsDomain[0].value);
-          if (projectsDomain.length > 1) {
-            setDisabled(false);
-          }
+          // setProjectId(projectsDomain[0].value);
+          // if (projectsDomain.length > 1) {
+          //   setDisabled(false);
+          // }
         },
         errorSnackbar,
         contributorId
       );
     }
-  }, [onloadError, errorSnackbar]);
+  }, [onloadError, errorSnackbar, contributorId]);
 
   useEffect(() => {
     if (projectId) {
@@ -124,6 +129,10 @@ const Activities = (props) => {
   useEffect(() => {
     fetchActivities();
   }, [fetchActivities]);
+
+  useEffect(() => {
+    props.setTitleOnLoad();
+  });
 
   const selectChangeHandler = (event) => {
     setProjectId(event.target.value);
@@ -203,8 +212,8 @@ const Activities = (props) => {
     setBackDrop(true);
     saveActivity(
       (resp) => {
-        fetchActivities();
         setOpenFormDiag(false);
+        fetchActivities();
         setActivity(null);
         setBackDrop(false);
         enqueueSnackbar(resp.data.message, {
@@ -233,12 +242,47 @@ const Activities = (props) => {
     </Typography>
   );
 
+  const table = projectId ? (
+    <Grid item container xs={12}>
+      <Grid item xs={12}>
+        <Fab
+          size='small'
+          color='primary'
+          aria-label='add'
+          // className={classes.fab}
+          onClick={onClickPlusHandler}
+        >
+          <AddIcon />
+        </Fab>
+      </Grid>
+      <ActivitiesTable
+        rows={rows}
+        onClickEditHandler={onClickEditHandler}
+        onClickDeleteHandler={onClickDeleteHandler}
+        page={page}
+        pageSize={pageSize}
+        handleChangePage={handleChangePage}
+        handleChangePageSize={handleChangePageSize}
+      />
+    </Grid>
+  ) : (
+    <Container maxWidth='sm'>
+      <Typography
+        style={{ marginTop: '50%' }}
+        variant='h4'
+        color='textSecondary'
+      >
+        Select a project
+      </Typography>
+    </Container>
+  );
+
   return (
     <Fragment>
       <Grid container direction='column' spacing={8}>
         <Grid item container xs={12} spacing={4}>
-          <Grid item xs={3}>
-            <TextField
+          <Grid item xs={4}>
+            {/* <TextField
               id='project-id'
               select
               label='Project'
@@ -247,18 +291,18 @@ const Activities = (props) => {
               size='small'
               value={projectId}
               onChange={(event) => selectChangeHandler(event)}
-              disabled={disabled}
-              SelectProps={{
-                native: true,
-              }}
+              // disabled={disabled}
+              // SelectProps={{
+              //   native: true,
+              // }}
             >
               {projects.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
-            </TextField>
-            {/* <FormControl className={classes.formControl}>
+            </TextField> */}
+            <FormControl className={classes.formControl}>
               <InputLabel id='project-id-select-label'>Project</InputLabel>
               <Select
                 labelId='project-id-select-label'
@@ -269,15 +313,6 @@ const Activities = (props) => {
                 value={projectId}
                 onChange={selectChangeHandler}
                 // disabled={disabled}
-                inputProps={{
-                  inputRef: (ref) => {
-                    if (!ref) return;
-                    register({
-                      name: "trinityPerson",
-                      value: ref.value,
-                    });
-                  },
-                }}
               >
                 {projects.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
@@ -285,7 +320,7 @@ const Activities = (props) => {
                   </MenuItem>
                 ))}
               </Select>
-            </FormControl> */}
+            </FormControl>
           </Grid>
           <Grid item xs={4}>
             {projectInfo('Client', selectedProject.clientName)}
@@ -293,31 +328,9 @@ const Activities = (props) => {
           <Grid item xs={4}>
             {projectInfo('Completion', selectedProject.dtExpectedCompletion)}
           </Grid>
-          <Grid item xs={1}>
-            <Fab
-              size='small'
-              color='primary'
-              aria-label='add'
-              className={classes.fab}
-              onClick={onClickPlusHandler}
-            >
-              <AddIcon />
-            </Fab>
-          </Grid>
         </Grid>
-        <Grid item container xs={12}>
-          {backDrop ? null : (
-            <ActivitiesTable
-              rows={rows}
-              onClickEditHandler={onClickEditHandler}
-              onClickDeleteHandler={onClickDeleteHandler}
-              page={page}
-              pageSize={pageSize}
-              handleChangePage={handleChangePage}
-              handleChangePageSize={handleChangePageSize}
-            />
-          )}
-        </Grid>
+
+        {table}
       </Grid>
       <DeleteDialog
         open={openDeleteDiag}
@@ -340,4 +353,18 @@ const Activities = (props) => {
   );
 };
 
-export default Activities;
+const mapStateToProps = (state) => {
+  return {
+    userId: state.auth.userId,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setTitleOnLoad: () =>
+      //dispatch({ type: actionTypes.SET_TITLE, title: 'Activities' }),
+      dispatch(actions.setTitle('Activities')),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Activities);

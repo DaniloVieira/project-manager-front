@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import * as actionTypes from '../../store/actionTypes';
 import clsx from 'clsx';
 import {
   makeStyles,
@@ -7,13 +9,10 @@ import {
   Toolbar,
   Switch,
   Typography,
-  Button,
+  Badge,
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import VideoCall from '@material-ui/icons/VideoCall';
-import AppsIcon from '@material-ui/icons/Apps';
-import MoreVert from '@material-ui/icons/MoreVert';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -66,25 +65,32 @@ const AppTopBar = (props) => {
           value={props.darkMode}
           onChange={() => props.setDarkMode(!props.darkMode)}
         />
-        <IconButton>
-          <VideoCall />
-        </IconButton>
-        <IconButton>
-          <AppsIcon />
-        </IconButton>
-        <IconButton>
-          <MoreVert />
-        </IconButton>
+
         <IconButton
           color='secondary'
           variant='outlined'
           aria-label='add to shopping cart'
         >
-          <AccountCircleIcon />
+          <Badge badgeContent={props.count} color='primary'>
+            <AccountCircleIcon />
+          </Badge>
         </IconButton>
       </Toolbar>
     </AppBar>
   );
 };
 
-export default AppTopBar;
+const mapStateToProps = (state) => {
+  return {
+    count: state.reducer.count,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onIncrementCount: () => dispatch({ type: actionTypes.INCREMENT_COUNT }),
+    onDecrementCount: () => dispatch({ type: actionTypes.DECREMENT_COUNT }),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AppTopBar);

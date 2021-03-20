@@ -11,6 +11,7 @@ import {
   TablePagination,
   IconButton,
   Typography,
+  Container,
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -87,9 +88,15 @@ const ActivitiesTable = (props) => {
   );
 
   const emptyTable = (
-    <Typography variant='h4' color='textSecondary'>
-      You have no activiteis on this project
-    </Typography>
+    <Container maxWidth='sm'>
+      <Typography
+        style={{ marginTop: '50%' }}
+        variant='h4'
+        color='textSecondary'
+      >
+        You have no activiteis on this project
+      </Typography>
+    </Container>
   );
 
   return rows.length > 0 ? table : emptyTable;

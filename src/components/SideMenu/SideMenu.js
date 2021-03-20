@@ -89,13 +89,13 @@ const mainMenu = [
 const secondMenu = [
   {
     icon: <VideoLibrary />,
-    text: 'Library',
+    text: 'Videos',
     link: '/videos',
   },
   {
     icon: <History />,
-    text: 'History',
-    link: '/',
+    text: 'Examples',
+    link: '/examples',
   },
 ];
 

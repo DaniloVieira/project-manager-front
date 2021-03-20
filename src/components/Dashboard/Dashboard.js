@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import * as actionTypes from '../../store/actionTypes';
 import { Grid, Box } from '@material-ui/core';
 import {
   LineChart,
@@ -60,7 +62,7 @@ const data = [
 
 const Dashboard = (props) => {
   useEffect(() => {
-    if (props.title) props.title('Dashboard');
+    props.setTitleOnLoad('Dashboard');
   });
 
   return (
@@ -138,4 +140,10 @@ const Dashboard = (props) => {
   );
 };
 
-export default Dashboard;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setTitleOnLoad: (t) => dispatch({ type: actionTypes.SET_TITLE, title: t }),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Dashboard);
