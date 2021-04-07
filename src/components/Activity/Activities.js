@@ -337,7 +337,7 @@ const Activities = (props) => {
         onCancel={handleCloseDeleteDiag}
         onConfirm={handleConfirmDeleteDiag}
       />
-      {activity ? (
+      {activity && (
         <ActivityFormDialog
           activity={activity}
           open={openFormDiag}
@@ -345,7 +345,7 @@ const Activities = (props) => {
           onSubmitSave={onSaveActivityHandler}
           inputChangeHandler={formInputChangeHandler}
         />
-      ) : null}
+      )}
       <Backdrop className={classes.backdrop} open={backDrop}>
         <CircularProgress color='inherit' />
       </Backdrop>
@@ -355,7 +355,7 @@ const Activities = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    userId: state.auth.userId,
+    userId: state.auth.user.id,
   };
 };
 

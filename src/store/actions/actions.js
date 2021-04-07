@@ -21,7 +21,20 @@ export const setTitle = (title) => {
 
 export const fetchUser = (id) => {
   return {
-    type: actionTypes.AUTH_START,
+    type: actionTypes.FETCH_USER_START,
     payload: { id },
+  };
+};
+
+export const authStart = (loginData) => {
+  return {
+    type: actionTypes.AUTH_START,
+    payload: { loginData },
+  };
+};
+
+export const authCheckState = () => {
+  return {
+    type: actionTypes.AUTH_CHECK_STATE_START,
   };
 };
