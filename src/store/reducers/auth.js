@@ -1,32 +1,34 @@
 import { updateObject } from '../../Shared/utility';
 import * as actionTypes from '../actionTypes';
+import { login, logout } from '../../services/auth'; // TODO import as a service
 
 const initialState = {
   token: null,
-  userId: 4,
   error: null,
   loading: false,
   authRedirectPath: '/',
   user: null,
+  isAuthenticated: false,
 };
 
 const authStart = (state, action) => {
   return updateObject(state, { error: null, loading: true });
 };
 const authSuccess = (state, action) => {
-  return updateObject(state, {
-    // token: action.idToken,
-    userId: action.userId,
+  const usr = updateObject(state, {
     error: null,
     loading: false,
-    user: action.user,
+    user: action.payload.user,
+    isAuthenticated: action.payload.authenticated,
   });
+  return usr;
 };
 const authFail = (state, action) => {
   return updateObject(state, { error: action.error, loading: false });
 };
 
 const authLogout = (state, action) => {
+  logout();
   return updateObject(state, { token: null, userId: null });
 };
 
