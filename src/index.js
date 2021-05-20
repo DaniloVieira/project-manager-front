@@ -10,7 +10,7 @@ import reportWebVitals from './reportWebVitals';
 import reducer from './store/reducers/reducer';
 import auth from './store/reducers/auth';
 import exampleReducer from './store/reducers/exampleReducer';
-import rootSaga from './sagas/sagas';
+import rootSaga from './store/sagas/sagas';
 
 const rootReducer = combineReducers({
   reducer,
