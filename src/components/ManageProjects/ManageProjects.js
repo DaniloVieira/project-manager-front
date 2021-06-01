@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import { Grid } from '@material-ui/core';
 import * as actionTypes from '../../store/actionTypes';
@@ -8,8 +8,10 @@ import ProjectTable from './ProjectTable';
 import { Projects } from '../../AuxData/Projects';
 import { Contributors } from '../../AuxData/Contributors';
 import { rows } from '../../AuxData/ProjectResultData';
+import ContentContext from '../../store/context/title-context';
 
 const ManageProjects = (props) => {
+  const { setTitle } = useContext(ContentContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [filters, setFilters] = useState({
@@ -28,7 +30,8 @@ const ManageProjects = (props) => {
   };
 
   useEffect(() => {
-    props.setTitleOnLoad('Manage Projects');
+    // props.setTitleOnLoad('Manage Projects');
+    setTitle('Manage Projects');
   });
 
   return (
@@ -55,10 +58,11 @@ const ManageProjects = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setTitleOnLoad: (t) => dispatch({ type: actionTypes.SET_TITLE, title: t }),
-  };
-};
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     setTitleOnLoad: (t) => dispatch({ type: actionTypes.SET_TITLE, title: t }),
+//   };
+// };
+// export default connect(null, mapDispatchToProps)(ManageProjects);
 
-export default connect(null, mapDispatchToProps)(ManageProjects);
+export default ManageProjects;
