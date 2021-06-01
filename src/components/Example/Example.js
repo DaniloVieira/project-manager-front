@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/actions';
 import Fab from '@material-ui/core/Fab';
@@ -16,6 +16,7 @@ import {
   Button,
   CircularProgress,
 } from '@material-ui/core';
+import ContentContext from '../../store/context/title-context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Examples = (props) => {
   const classes = useStyles();
+  const { setTitle } = useContext(ContentContext);
   const [syncUser, setSyncUser] = useState(null);
   // const [loadingColor, setloadingColor] = useState('primary');
   // const [loading, setloading] = useState(false);
@@ -56,7 +58,8 @@ const Examples = (props) => {
   };
 
   useEffect(() => {
-    props.setTitleOnLoad('Examples');
+    // props.setTitleOnLoad('Examples');
+    setTitle('Examples');
   });
 
   const fetcUser = (id) => {
@@ -153,7 +156,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onIncrementCount: () => dispatch(actions.incrementCount()),
     onDecrementCount: () => dispatch(actions.decrementCount()),
-    setTitleOnLoad: (t) => dispatch(actions.setTitle(t)),
+    // setTitleOnLoad: (t) => dispatch(actions.setTitle(t)),
     asyncSagaFunction: () => dispatch(actions.fetchUser(1)),
   };
 };

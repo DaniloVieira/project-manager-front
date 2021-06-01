@@ -1,4 +1,10 @@
-import React, { useState, Fragment, useEffect, useCallback } from 'react';
+import React, {
+  useState,
+  Fragment,
+  useEffect,
+  useCallback,
+  useContext,
+} from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/actions';
 import {
@@ -20,6 +26,7 @@ import AddIcon from '@material-ui/icons/Add';
 import ActivitiesTable from './ActivitiesTable';
 import DeleteDialog from '../../Shared/Components/DeleteDialog/DeleteDialog';
 import ActivityFormDialog from './ActivityFormDialog';
+import ContentContext from '../../store/context/title-context';
 
 import {
   fetchActivitiesData,
@@ -50,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Activities = (props) => {
+  const { setTitle } = useContext(ContentContext);
   const { userId } = props;
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -131,7 +139,8 @@ const Activities = (props) => {
   }, [fetchActivities]);
 
   useEffect(() => {
-    props.setTitleOnLoad();
+    // props.setTitleOnLoad();
+    setTitle('Activities');
   });
 
   const selectChangeHandler = (event) => {
@@ -366,5 +375,4 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(actions.setTitle('Activities')),
   };
 };
-
 export default connect(mapStateToProps, mapDispatchToProps)(Activities);

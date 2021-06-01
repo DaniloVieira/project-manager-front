@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import * as actionTypes from '../../store/actionTypes';
 import { Grid, Box } from '@material-ui/core';
@@ -14,6 +14,7 @@ import {
   Bar,
   ResponsiveContainer,
 } from 'recharts';
+import ContentContext from '../../store/context/title-context';
 
 const data = [
   {
@@ -61,8 +62,10 @@ const data = [
 ];
 
 const Dashboard = (props) => {
+  const { setTitle } = useContext(ContentContext);
   useEffect(() => {
-    props.setTitleOnLoad('Dashboard');
+    // props.setTitleOnLoad('Dashboard');
+    setTitle('Dashboard');
   });
 
   return (
@@ -140,10 +143,11 @@ const Dashboard = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setTitleOnLoad: (t) => dispatch({ type: actionTypes.SET_TITLE, title: t }),
-  };
-};
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     setTitleOnLoad: (t) => dispatch({ type: actionTypes.SET_TITLE, title: t }),
+//   };
+// };
+// export default connect(null, mapDispatchToProps)(Dashboard);
 
-export default connect(null, mapDispatchToProps)(Dashboard);
+export default Dashboard;
