@@ -1,6 +1,7 @@
 import { updateObject } from '../../Shared/utility';
 import * as actionTypes from '../actionTypes';
 import { login, logout } from '../../services/auth'; // TODO import as a service
+import { useHistory } from 'react-router-dom';
 
 const initialState = {
   token: null,
@@ -29,7 +30,8 @@ const authFail = (state, action) => {
 
 const authLogout = (state, action) => {
   logout();
-  return updateObject(state, { token: null, userId: null });
+  const updated = updateObject(state, { token: null, user: null });
+  return updated;
 };
 
 const setAuthRedirectPath = (state, action) => {

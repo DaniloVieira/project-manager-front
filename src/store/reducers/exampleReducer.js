@@ -6,6 +6,8 @@ const initialState = {
   loadingColor: null,
   loading: false,
   fails: [],
+  user: null,
+  userLoading: false,
 };
 
 const reducerAction = {
@@ -34,6 +36,13 @@ const reducerAction = {
       fails: [...aux, { msg: 'falied decrement' }],
     });
   },
+
+  [actionTypes.EXAMPLE_AUTH_START]: (state, action) =>
+    updateObject(state, { user: null, userLoading: true }),
+  [actionTypes.EXAMPLE_AUTH_SUCCESS]: (state, action) =>
+    updateObject(state, { user: action.payload, userLoading: false }),
+  [actionTypes.EXAMPLE_AUTH_FAIL]: (state, action) =>
+    updateObject(state, { user: null, userLoading: false }),
 };
 
 const reducer = (state = initialState, action) => {
