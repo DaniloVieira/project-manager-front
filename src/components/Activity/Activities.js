@@ -34,6 +34,7 @@ import {
   fetchProjectDomain2,
   fetchProjectById,
   saveActivity,
+  saveActivityNew,
   fetchActivityById,
   deleteActivityById,
 } from '../../services';
@@ -229,7 +230,7 @@ const Activities = (props) => {
     setActivity({ ...activity, [identifier]: value });
   };
 
-  const onSaveActivityHandler = () => {
+  const onSaveActivityHandler = async () => {
     setBackDrop(true);
     saveActivity(
       (resp) => {
@@ -251,6 +252,25 @@ const Activities = (props) => {
         ...activity,
       }
     );
+  };
+
+  const onSaveActivityHandlerNew = async () => {
+    setBackDrop(true);
+    try {
+      const resp = await saveActivityNew(activity);
+      setOpenFormDiag(false);
+        fetchActivities();
+        setActivity(null);
+        setBackDrop(false);
+        enqueueSnackbar(resp.data.message, {
+          variant: 'success',
+        });      
+    } catch (error) {
+         setBackDrop(false);
+        enqueueSnackbar(error, {
+          variant: 'danger',
+        });     
+    }
   };
 
   const projectInfo = (label, value) => (
@@ -363,7 +383,8 @@ const Activities = (props) => {
           activity={activity}
           open={openFormDiag}
           onClose={handleCloseFormDiag}
-          onSubmitSave={onSaveActivityHandler}
+          // onSubmitSave={onSaveActivityHandler}
+          onSubmitSave={onSaveActivityHandlerNew}
           inputChangeHandler={formInputChangeHandler}
         />
       )}

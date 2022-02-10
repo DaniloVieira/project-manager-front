@@ -9,6 +9,7 @@ export {
 export {
   fetchActivitiesData,
   saveActivity,
+  saveActivityNew,
   fetchActivityById,
   deleteActivityById,
 } from './ActivitiesService';
