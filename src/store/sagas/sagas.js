@@ -26,7 +26,7 @@ function* authChekcStateAsync(action) {
       const authenticated = yield call(isAuthenticated);
       yield put({
         type: actionTypes.AUTH_SUCCESS,
-        payload: { user: resp.data, authenticated },
+        payload: { user: resp.data.value, authenticated },
       });
     }
   } catch (e) {
@@ -74,6 +74,23 @@ function* watchFetchUserAsync() {
 }
 
 // worker Saga
+function* fetchUserAsyncExample(action) {
+  try {
+    const resp = yield call(fetchUserById, action.payload.id);
+    yield put({
+      type: actionTypes.EXAMPLE_AUTH_SUCCESS,
+      payload: resp.data.value,
+    });
+  } catch (e) {
+    console.log('ERRO', '[fetchUserAsyncExample]', e);
+  }
+}
+// watcher saga
+function* watchFetchUserAsyncExample() {
+  yield takeEvery(actionTypes.EXAMPLE_AUTH_START, fetchUserAsyncExample);
+}
+
+// worker Saga
 function* incrementAsync() {
   yield delay(3000);
   yield put({ type: actionTypes.INCREMENT_COUNT });
@@ -102,6 +119,7 @@ export default function* rootSaga() {
     watchFetchUserAsync(),
     watchDecrementAsync(),
     watchIncrementAsync(),
+    watchFetchUserAsyncExample(),
   ]);
 }
 

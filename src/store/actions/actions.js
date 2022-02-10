@@ -12,6 +12,13 @@ export const decrementCount = () => {
   };
 };
 
+export const fetchUserExample = (id) => {
+  return {
+    type: actionTypes.EXAMPLE_AUTH_START,
+    payload: { id },
+  };
+};
+
 export const setTitle = (title) => {
   return {
     type: actionTypes.SET_TITLE,
@@ -36,5 +43,11 @@ export const authStart = (loginData) => {
 export const authCheckState = () => {
   return {
     type: actionTypes.AUTH_CHECK_STATE_START,
+  };
+};
+
+export const authLogout = () => {
+  return {
+    type: actionTypes.AUTH_LOGOUT,
   };
 };

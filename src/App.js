@@ -24,6 +24,8 @@ import ManageProjects from './components/ManageProjects/ManageProjects';
 import Examples from './components/Example/Example';
 import Login from './components/Login/Login';
 
+import { isAuthenticated as isAuth } from './services';
+
 function App(props) {
   const { isAuthenticated, onTryAutoSignup } = props;
   const [darkMode, setDarkMode] = useState(false);
@@ -113,7 +115,7 @@ function App(props) {
 
 const mapStateToProps = (state) => {
   return {
-    isAuthenticated: state.auth.isAuthenticated,
+    isAuthenticated: state.auth.user != null,
   };
 };
 

@@ -37,6 +37,12 @@ export const saveActivity = (func, errMsg, activity) => {
     });
 };
 
+export const saveActivityNew = async (activity) => {
+  return new Promise((resolve, reject) => {
+    axios.post(`${serviceUri}/${endpoint}/save`, activity).then(resolve, reject);
+  });
+};
+
 export const fetchActivityById = (func, errMsg, Id) => {
   axios
     .get(`${serviceUri}/${endpoint}/${Id}`)

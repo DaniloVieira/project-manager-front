@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState, useContext, Fragment } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import * as actions from '../../store/actions/actions';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
@@ -12,8 +12,6 @@ import {
   Card,
   CardContent,
   Typography,
-  CardActions,
-  Button,
   CircularProgress,
 } from '@material-ui/core';
 import ContentContext from '../../store/context/title-context';
@@ -35,130 +33,154 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Examples = (props) => {
+const ResultCard = (props) => {
   const classes = useStyles();
-  const { setTitle } = useContext(ContentContext);
-  const [syncUser, setSyncUser] = useState(null);
-  // const [loadingColor, setloadingColor] = useState('primary');
-  // const [loading, setloading] = useState(false);
-  const bull = <span className={classes.bullet}>•</span>;
-
-  const { loading, loadingColor } = props;
-
-  const increment = () => {
-    // setloadingColor('primary');
-    // setloading(true);
-    props.onIncrementCount();
-  };
-
-  const decrement = () => {
-    // setloadingColor('secondary');
-    // setloading(true);
-    props.onDecrementCount();
-  };
-
-  useEffect(() => {
-    // props.setTitleOnLoad('Examples');
-    setTitle('Examples');
-  });
-
-  const fetcUser = (id) => {
-    fetchUserById(id)
-      .then((resp) => {
-        setSyncUser(resp.data?.value);
-      })
-      .catch((err) => {
-        console.log('fetchUserById', '[ERROR]');
-      });
-  };
-
-  const resultCard = (value) => (
+  const { result } = props;
+  return (
     <Card className={classes.root}>
       <CardContent>
-        <Typography
-          // className={classes.title}
-          color='textSecondary'
-          gutterBottom
-          variant='h4'
-        >
-          {value}
+        <Typography color='textSecondary' gutterBottom variant='h4'>
+          {result}
         </Typography>
       </CardContent>
     </Card>
   );
+};
+
+const TestContainer = (props) => {
+  const { actionComponent, result, item = false } = props;
+  return (
+    // <Fragment>
+    <Grid item={item} container xs={12} spacing={8}>
+      <Grid item container xs={1}>
+        {actionComponent}
+      </Grid>
+      <Grid item xs={11}>
+        <ResultCard result={result} />
+      </Grid>
+    </Grid>
+    // </Fragment>
+  );
+};
+
+const Examples = (props) => {
+  // const userId = useSelector((state) => state.auth.userId);
+  // const [loadingColor, setloadingColor] = useState('primary');
+  // const [loading, setloading] = useState(false);
+  // const { loading, loadingColor } = props;
+  //const onDecrementCount = useDispatch(actions.decrementCount());
+  // const fetcUser = (id) => {
+  //   fetchUserById(id)
+  //     .then((resp) => {
+  //       setSyncUser(resp.data?.value);
+  //     })
+  //     .catch((err) => {
+  //       console.log('fetchUserById', '[ERROR]');
+  //     });
+  // };
+  const classes = useStyles();
+  const { setTitle } = useContext(ContentContext);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const exampleUser = useSelector((state) => state.exampleReducer.user);
+  const count = useSelector((state) => state.exampleReducer.count);
+  const loading = useSelector((state) => state.exampleReducer.loading);
+  const loadingColor = useSelector(
+    (state) => state.exampleReducer.loadingColor
+  );
+  const userLoading = useSelector((state) => state.exampleReducer.userLoading);
+  const [syncUser, setSyncUser] = useState(null);
+  const bull = <span className={classes.bullet}>•</span>;
+
+  const asyncSagaFunction = () => dispatch(actions.fetchUserExample(1));
+
+  const increment = () => {
+    dispatch(actions.incrementCount());
+  };
+
+  const decrement = () => {
+    dispatch(actions.decrementCount());
+  };
+
+  useEffect(() => {
+    setTitle('Examples');
+  });
+
+  const fetchUser = async (id) => {
+    try {
+      const resp = await fetchUserById(id);
+      setSyncUser(resp.data.value);
+    } catch (e) {
+      console.log('fetchUserById', '[ERROR]');
+    }
+  };
 
   return (
     <Grid item container xs={12} spacing={8}>
-      <Grid item container xs={1}>
-        <Grid direction='column' container item xs={6}>
-          <Fab
-            color='primary'
-            size='small'
-            aria-label='add'
-            onClick={increment}
-          >
-            <AddIcon />
-          </Fab>
-          <Fab
-            color='secondary'
-            size='small'
-            aria-label='add'
-            onClick={decrement}
-          >
-            <RemoveIcon />
-          </Fab>
-        </Grid>
-        <Grid item xs={6}>
-          {loading ? <CircularProgress color={loadingColor} /> : null}
-        </Grid>
-      </Grid>
+      <TestContainer
+        item
+        actionComponent={
+          <Grid item container xs={12}>
+            <Grid direction='column' container item xs={6}>
+              <Fab
+                color='primary'
+                size='small'
+                aria-label='add'
+                onClick={increment}
+              >
+                <AddIcon />
+              </Fab>
+              <Fab
+                color='secondary'
+                size='small'
+                aria-label='add'
+                onClick={decrement}
+              >
+                <RemoveIcon />
+              </Fab>
+            </Grid>
+            <Grid item xs={6}>
+              {loading ? <CircularProgress color={loadingColor} /> : null}
+            </Grid>
+          </Grid>
+        }
+        result={`Count: ${count}`}
+      />
+
+      <Grid item xs={1}></Grid>
       <Grid item xs={11}>
-        {resultCard(props.count)}
+        <ResultCard
+          result={`Current User: ${user ? user.firstName : 'no user'}`}
+        />
       </Grid>
 
-      <Grid item xs={1}>
-        <Fab
-          aria-label='add'
-          onClick={props.asyncSagaFunction}
-          className={classes.spiningAnimation}
-        >
-          <CachedIcon />
-        </Fab>
-      </Grid>
-      <Grid item xs={11}>
-        {resultCard('User: ' + (props.user ? props.user.firstName : 'no user'))}
-      </Grid>
-      <Grid item xs={1}>
-        <Fab aria-label='add' onClick={() => fetcUser(1)}>
-          <CachedIcon />
-        </Fab>
-      </Grid>
-      <Grid item xs={11}>
-        {resultCard(
-          'Sync User: ' + (syncUser ? syncUser.firstName : 'no user')
-        )}
-      </Grid>
+      <TestContainer
+        item
+        actionComponent={
+          <Fab
+            aria-label='add'
+            onClick={asyncSagaFunction}
+            className={classes.spiningAnimation}
+          >
+            <CachedIcon />
+          </Fab>
+        }
+        result={`Async User: ${
+          exampleUser ? exampleUser.firstName : 'no user'
+        }`}
+      />
+
+      <TestContainer
+        item
+        actionComponent={
+          <Fab aria-label='add' onClick={() => fetchUser(1)}>
+            <CachedIcon />
+          </Fab>
+        }
+        result={`Sync User: ${syncUser ? syncUser.firstName : 'no user'}`}
+      />
     </Grid>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    userId: state.auth.userId,
-    user: state.auth.user,
-    count: state.exampleReducer.count,
-    loading: state.exampleReducer.loading,
-    loadingColor: state.exampleReducer.loadingColor,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onIncrementCount: () => dispatch(actions.incrementCount()),
-    onDecrementCount: () => dispatch(actions.decrementCount()),
-    // setTitleOnLoad: (t) => dispatch(actions.setTitle(t)),
-    asyncSagaFunction: () => dispatch(actions.fetchUser(1)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Examples);
+export default Examples;

@@ -17,6 +17,10 @@ export const fetchProjectDomain = (func, errMsg, contributorId) => {
     });
 };
 
+export const fetchProjectDomain2 = (contributorId) => {
+  return axios.get(`${serviceUri}/${project}/domain/${contributorId}`);
+};
+
 export const fetchProjectById = (func, errMsg, projetctId) => {
   axios
     .get(`${serviceUri}/${project}/${projetctId}`)

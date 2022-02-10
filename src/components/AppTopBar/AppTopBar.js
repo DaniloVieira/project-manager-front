@@ -1,6 +1,7 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import * as actionTypes from '../../store/actionTypes';
+import { authLogout as logout } from '../../store/actions/actions';
 import clsx from 'clsx';
 import {
   makeStyles,
@@ -10,6 +11,8 @@ import {
   Switch,
   Typography,
   Badge,
+  Menu,
+  MenuItem,
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -41,7 +44,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AppTopBar = (props) => {
+  const dispatch = useDispatch();
   const classes = useStyles();
+  const user = useSelector((state) => state.auth.user);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <AppBar color='inherit' position='fixed' className={classes.appBar}>
       <Toolbar>
@@ -69,28 +82,35 @@ const AppTopBar = (props) => {
         <IconButton
           color='secondary'
           variant='outlined'
-          aria-label='add to shopping cart'
+          aria-label='user profile'
+          onClick={handleClick}
         >
           <Badge badgeContent={props.count} color='primary'>
             <AccountCircleIcon />
           </Badge>
         </IconButton>
       </Toolbar>
+      <Menu
+        id='simple-menu'
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <Typography
+          style={{ padding: '5px 5px 5px 10px' }}
+          color='textSecondary'
+          gutterBottom
+          variant='h6'
+        >
+          {user.firstName}
+        </Typography>
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}>My account</MenuItem>
+        <MenuItem onClick={() => dispatch(logout())}>Logout</MenuItem>
+      </Menu>
     </AppBar>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    count: state.reducer.count,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onIncrementCount: () => dispatch({ type: actionTypes.INCREMENT_COUNT }),
-    onDecrementCount: () => dispatch({ type: actionTypes.DECREMENT_COUNT }),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AppTopBar);
+export default AppTopBar;

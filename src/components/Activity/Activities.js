@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useContext,
 } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import * as actions from '../../store/actions/actions';
 import {
   makeStyles,
@@ -31,8 +31,10 @@ import ContentContext from '../../store/context/title-context';
 import {
   fetchActivitiesData,
   fetchProjectDomain,
+  fetchProjectDomain2,
   fetchProjectById,
   saveActivity,
+  saveActivityNew,
   fetchActivityById,
   deleteActivityById,
 } from '../../services';
@@ -57,9 +59,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Activities = (props) => {
-  const { setTitle } = useContext(ContentContext);
-  const { userId } = props;
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const { setTitle } = useContext(ContentContext);
+  // const { userId } = props;
+  const { id: userId } = useSelector((state) => state.auth.user);
   const { enqueueSnackbar } = useSnackbar();
   const [onloadError, setOnloadError] = useState(false);
   const [backDrop, setBackDrop] = useState(false);
@@ -106,18 +110,27 @@ const Activities = (props) => {
 
   useEffect(() => {
     if (!onloadError) {
-      fetchProjectDomain(
-        (resp) => {
-          const projectsDomain = resp.data;
-          setProjects(projectsDomain);
-          // setProjectId(projectsDomain[0].value);
-          // if (projectsDomain.length > 1) {
-          //   setDisabled(false);
-          // }
-        },
-        errorSnackbar,
-        userId
-      );
+      // fetchProjectDomain(
+      //   (resp) => {
+      //     const projectsDomain = resp.data;
+      //     setProjects(projectsDomain);
+      //     // setProjectId(projectsDomain[0].value);
+      //     // if (projectsDomain.length > 1) {
+      //     //   setDisabled(false);
+      //     // }
+      //   },
+      //   errorSnackbar,
+      //   userId
+      // );
+      (async () => {
+        try {
+          const projectsDomain = await fetchProjectDomain2(userId);
+          setProjects(projectsDomain.data);
+        } catch (err) {
+          console.log(err);
+          errorSnackbar();
+        }
+      })();
     }
   }, [onloadError, errorSnackbar, userId]);
 
@@ -217,7 +230,7 @@ const Activities = (props) => {
     setActivity({ ...activity, [identifier]: value });
   };
 
-  const onSaveActivityHandler = () => {
+  const onSaveActivityHandler = async () => {
     setBackDrop(true);
     saveActivity(
       (resp) => {
@@ -239,6 +252,25 @@ const Activities = (props) => {
         ...activity,
       }
     );
+  };
+
+  const onSaveActivityHandlerNew = async () => {
+    setBackDrop(true);
+    try {
+      const resp = await saveActivityNew(activity);
+      setOpenFormDiag(false);
+        fetchActivities();
+        setActivity(null);
+        setBackDrop(false);
+        enqueueSnackbar(resp.data.message, {
+          variant: 'success',
+        });      
+    } catch (error) {
+         setBackDrop(false);
+        enqueueSnackbar(error, {
+          variant: 'danger',
+        });     
+    }
   };
 
   const projectInfo = (label, value) => (
@@ -351,7 +383,8 @@ const Activities = (props) => {
           activity={activity}
           open={openFormDiag}
           onClose={handleCloseFormDiag}
-          onSubmitSave={onSaveActivityHandler}
+          // onSubmitSave={onSaveActivityHandler}
+          onSubmitSave={onSaveActivityHandlerNew}
           inputChangeHandler={formInputChangeHandler}
         />
       )}
@@ -362,17 +395,4 @@ const Activities = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    userId: state.auth.user.id,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setTitleOnLoad: () =>
-      //dispatch({ type: actionTypes.SET_TITLE, title: 'Activities' }),
-      dispatch(actions.setTitle('Activities')),
-  };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(Activities);
+export default Activities;
