@@ -5,22 +5,37 @@ import * as actionTypes from '../../store/actionTypes';
 import Form from './Form';
 import ProjectTable from './ProjectTable';
 
-import { Projects } from '../../AuxData/Projects';
-import { Contributors } from '../../AuxData/Contributors';
+
 import { rows } from '../../AuxData/ProjectResultData';
 import ContentContext from '../../store/context/title-context';
+import { searchProjects } from '../../services/ProjectService';
 
 const ManageProjects = (props) => {
   const { setTitle } = useContext(ContentContext);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [projetos, setProjetos] = useState([]);
   const [filters, setFilters] = useState({
-    clientName: 'name',
-    contributorId: null,
-    contributors: Contributors,
-    projectId: null,
-    projects: Projects,
+    projectId: ``,
+    description: ``,
+    clientName: ``,
+    contribuitorsIds: [],
+    initialDtCreation: null,
+    finalDtCreation: null,
+    initialDtStart: null,
+    finalDtStart: null,
+    initialDtCompletion: null,
+    finalDtCompletion: null,
   });
+
+  useEffect(() => {
+    // props.setTitleOnLoad('Manage Projects');
+    setTitle('Manage Projects');
+  });
+
+  // useEffect(() => {
+
+  // }, []);
 
   const inputChangeHandler = (value, identifier) => {
     setFilters({
@@ -29,10 +44,31 @@ const ManageProjects = (props) => {
     });
   };
 
-  useEffect(() => {
-    // props.setTitleOnLoad('Manage Projects');
-    setTitle('Manage Projects');
-  });
+  const getProjetosData = data => {
+    return data?.map((p) => ({
+      name: p.description,
+      client: p.clientName,
+      creationDate: p.dtCreation,
+      startDate: p.dtStart,
+      completionDate: p.dtRealCompletiondtRealCompletion,
+      workHours: p.totalHours,
+    }));
+  }
+
+  const submitSearch = async () => {
+    try {
+      const { data } = await searchProjects({page, pageSize, ...filters});
+      const {currentPage, hasNext, hasPrevious, pageSize: pgSize , totalSize, value} = data;
+      setPage(currentPage);
+      setPage(pgSize);
+      setProjetos(getProjetosData(value));
+      console.log(`[submitSearch]`, value);      
+    } catch (error) {
+        console.log(`ERROR.`, `submitSearch`, error);
+      
+    }
+
+  }
 
   return (
     <Grid
@@ -43,26 +79,20 @@ const ManageProjects = (props) => {
       spacing={8}
     >
       <Grid item xs={12}>
-        <Form inputChangeHandler={inputChangeHandler} values={filters} />
+        <Form onSubmit={submitSearch}  inputChangeHandler={inputChangeHandler} values={filters} />        
       </Grid>
+        {/* <pre>{JSON.stringify(filters)}</pre> */}
       <Grid item container xs={12}>
         <ProjectTable
-          rows={rows}
+          rows={projetos}
           page={page}
-          rowsPerPage={rowsPerPage}
-          setRowsPerPage={(value) => setRowsPerPage(value)}
+          rowsPerPage={pageSize}
+          setRowsPerPage={(value) => setPageSize(value)}
           setPage={(value) => setPage(value)}
         />
       </Grid>
     </Grid>
   );
 };
-
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     setTitleOnLoad: (t) => dispatch({ type: actionTypes.SET_TITLE, title: t }),
-//   };
-// };
-// export default connect(null, mapDispatchToProps)(ManageProjects);
 
 export default ManageProjects;

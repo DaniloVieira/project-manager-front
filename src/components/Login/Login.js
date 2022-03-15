@@ -6,7 +6,6 @@ import {
   Button,
   TextField,
   Paper,
-  withTheme,
   LinearProgress,
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
@@ -33,8 +32,8 @@ const Login = (props) => {
   const classes = useStyles();
   const { authenticate, loading, error } = props;
   const [loginData, setLoginData] = useState({
-    username: null,
-    password: null,
+    username: ``,
+    password: ``,
   });
   const inputHandleChange = (value, identifier) =>
     setLoginData({ ...loginData, [identifier]: value });
@@ -43,6 +42,7 @@ const Login = (props) => {
     event.preventDefault();
     authenticate(loginData);
   };
+
   return (
     <div className={classes.container}>
       <div>
@@ -57,7 +57,9 @@ const Login = (props) => {
                   fullWidth
                   size='small'
                   value={loginData['username']}
-                  disable={loading}
+                  InputProps={{
+                    readOnly: loading,
+                  }}
                   onChange={(event) =>
                     inputHandleChange(event.target.value, 'username')
                   }
@@ -72,14 +74,16 @@ const Login = (props) => {
                   fullWidth
                   size='small'
                   value={loginData['password']}
-                  disable={loading}
+                  InputProps={{
+                    readOnly: loading,
+                  }}
                   onChange={(event) =>
                     inputHandleChange(event.target.value, 'password')
                   }
                 />
               </Grid>
               <Grid item xs={12} container justify='flex-end'>
-                <Button type='submit' color='primary' disable={loading}>
+                <Button type='submit' color='primary' disabled={loading}>
                   Login
                 </Button>
               </Grid>

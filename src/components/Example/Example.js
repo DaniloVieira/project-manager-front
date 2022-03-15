@@ -94,13 +94,10 @@ const Examples = (props) => {
 
   const asyncSagaFunction = () => dispatch(actions.fetchUserExample(1));
 
-  const increment = () => {
-    dispatch(actions.incrementCount());
-  };
+  const increment = () => dispatch(actions.incrementCount());
 
-  const decrement = () => {
-    dispatch(actions.decrementCount());
-  };
+  const decrement = () => dispatch(actions.decrementCount());
+  
 
   useEffect(() => {
     setTitle('Examples');

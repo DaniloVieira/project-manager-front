@@ -10,13 +10,13 @@ export const fetchActivitiesData = (
   func,
   errMsg,
   projectId,
-  contributorId,
+  contribuitorsIds,
   page,
   pageSize
 ) => {
   axios
     .get(`${serviceUri}/${endpoint}/list`, {
-      params: { projectId, contributorId, page, pageSize },
+      params: { projectId, contribuitorsIds, page, pageSize },
     })
     .then((resp) => {
       func(resp);

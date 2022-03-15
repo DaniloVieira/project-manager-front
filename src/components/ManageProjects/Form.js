@@ -1,201 +1,159 @@
-import React from 'react';
-import { Grid, Button, TextField } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Grid, Button } from '@material-ui/core';
+// import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '../common/textField';
+import DatePicker from '../common/datePicker';
+import { format } from 'date-fns';
+import Autocomplete from '../common/autocomplete';
+import { Contributors } from '../../AuxData/Contributors';
+import { Projects } from '../../AuxData/Projects';
+import Select from '../common/select/Index';
+import { getAll } from '../../services/Contributor.service';
+import { useSnackbar } from 'notistack';
 
 const Form = (props) => {
+  const {onSubmit, inputChangeHandler} = props;
+  const [contributors, setContributors] = useState([]);
+  const [projects, setProjects] = useState(Projects);
+  const { enqueueSnackbar } = useSnackbar();
+
   const internalhandleChange = (value, identifier) => {
-    props.inputChangeHandler(value, identifier);
+    inputChangeHandler(value, identifier);
   };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onSubmit();
+  };
+
+  const fetchContributors = useCallback(
+    async () => {
+      try {
+        const { data } = await getAll();
+        const con = data?.value[0].map(r => ({value:r.id, label: r.firstName}));
+        setContributors(con);
+      } catch (error) {
+        // setBackDrop(false);
+        enqueueSnackbar(error, { variant: "danger" });
+      }
+    },
+    [enqueueSnackbar],
+  );
+
+  useEffect(() => {
+    fetchContributors();
+  }, [fetchContributors]);
+
   return (
-    <form noValidate autoComplete='off'>
+    <form noValidate autoComplete="off" onSubmit={handleSubmit}>
       <Grid container spacing={4}>
-        <Grid item xs={4}>
-          <TextField
-            id='client-name'
-            label='Client Name'
-            margin='dense'
-            fullWidth
-            size='small'
-            value={props.values['clientName']}
-            onChange={(event) =>
-              internalhandleChange(event.target.value, 'clientName')
-            }
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TextField
-            id='client-description'
-            label='Project Description'
-            margin='dense'
-            fullWidth
-            size='small'
-            value={props.values['clientDescription']}
-            onChange={(event) =>
-              internalhandleChange(event, 'clientDescription')
-            }
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TextField
-            id='project-id'
-            select
-            label='Project'
-            margin='dense'
-            fullWidth
-            size='small'
-            value={props.values['projectId']}
-            onChange={(event) =>
-              internalhandleChange(event.target.value, 'projectId')
-            }
-            SelectProps={{
-              native: true,
+        <TextField
+          id="client-name"
+          label="Client Name"
+          size={4}
+          value={props.values["clientName"]}
+          onChange={(event) =>
+            internalhandleChange(event.target.value, "clientName")
+          }
+        />
+        <TextField
+          id="project-description"
+          label="Project Description"
+          size={4}
+          value={props.values["clientDescription"]}
+          onChange={(event) =>
+            internalhandleChange(event.target.value, "description")
+          }
+        />
+         <Autocomplete
+          multiple
+          id="contributors-ids"
+          label="Contributors"
+          size={4}
+          options={contributors}
+          onChange={(event, newValue) => {
+            return internalhandleChange(newValue, "contribuitorsIds");
+          }}
+        />
+        {/* <Select
+          id="project-id"
+          label="Project"
+          size={4}
+          value={props.values["projectId"]}
+          options={projects}
+          onChange={(event) =>
+            internalhandleChange(event.target.value, "projectId")
+          }
+        /> */}
+        <Grid item xs={4} container justify="flex-end">
+          <DatePicker
+            id="dt-initial-creation"
+            label="Creation Start"
+            size={6}
+            value={props.values["initialDtCreation"]}
+            format="MM/dd/yyyy"
+            onChange={(value, second) => {
+              internalhandleChange(value, "initialDtCreation");
             }}
-          >
-            {props.values['projects'].map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={4} container justify='flex-end'>
-          <Grid item xs={6}>
-            <TextField
-              id='dt-initial-creation'
-              label='Creation'
-              margin='dense'
-              fullWidth
-              size='small'
-              value={props.values['initialDtCreation']}
-              initialDtCreationonChange={(event) =>
-                internalhandleChange(event.target.value, 'initialDtCreation')
-              }
-              type='date'
-              style={{ paddingRight: 10 }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              id='dt-final-creation'
-              label=' '
-              margin='dense'
-              fullWidth
-              size='small'
-              value={props.values['finalDtCreation']}
-              onChange={(event) =>
-                internalhandleChange(event.target.value, 'finalDtCreation')
-              }
-              type='date'
-              style={{ paddingLeft: 10 }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-        </Grid>
-        <Grid item xs={4} container justify='flex-end'>
-          <Grid item xs={6}>
-            <TextField
-              id='dt-initial-start'
-              label='Project start'
-              margin='dense'
-              fullWidth
-              size='small'
-              value={props.values['initialDtStart']}
-              onChange={(event) =>
-                internalhandleChange(event.target.value, 'initialDtStart')
-              }
-              type='date'
-              style={{ paddingRight: 10 }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              id='dt-final-start'
-              label=' '
-              margin='dense'
-              fullWidth
-              size='small'
-              value={props.values['finalDtStart']}
-              onChange={(event) =>
-                internalhandleChange(event.target.value, 'finalDtStart')
-              }
-              type='date'
-              style={{ paddingLeft: 10 }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-        </Grid>
-        <Grid item xs={4} container justify='flex-end'>
-          <Grid item xs={6}>
-            <TextField
-              id='dt-initial-completion'
-              label='Completion'
-              margin='dense'
-              fullWidth
-              size='small'
-              value={props.values['initialDtCompletion']}
-              onChange={(event) =>
-                internalhandleChange(event, 'initialDtCompletion')
-              }
-              type='date'
-              style={{ paddingRight: 10 }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              id='dt-final-completion'
-              label=' '
-              margin='dense'
-              fullWidth
-              size='small'
-              value={props.values['finalDtCompletion']}
-              onChange={(event) =>
-                internalhandleChange(event, 'finalDtCompletion')
-              }
-              type='date'
-              style={{ paddingLeft: 10 }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <Autocomplete
-            multiple
-            id='contributors-ids'
-            options={props.values['contributors']}
-            getOptionLabel={(option) => option.label}
-            // defaultValue={props.values['contributorId']}
-            onChange={(event, newValue) => {
-              return internalhandleChange(newValue, 'contributorId');
+          />
+          <DatePicker
+            id="dt-final-creation"
+            label="Creation End"
+            size={6}
+            value={props.values["finalDtCreation"]}
+            format="MM/dd/yyyy"
+            onChange={(value, second) => {
+              internalhandleChange(value, "finalDtCreation");
             }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant='standard'
-                label='Contributors'
-                fullWidth
-                size='small'
-              />
-            )}
           />
         </Grid>
-        <Grid item xs={12} container justify='flex-end'>
-          <Button variant='contained' color='primary'>
-            Primary
+        <Grid item xs={4} container justify="flex-end">
+          <DatePicker
+            id="dt-initial-start"
+            label="Project start"
+            size={6}
+            value={props.values["initialDtStart"]}
+            format="MM/dd/yyyy"
+            onChange={(value, second) => {
+              internalhandleChange(value, "initialDtStart");
+            }}
+          />
+          <DatePicker
+            id="dt-final-start"
+            label="Project end"
+            size={6}
+            value={props.values["finalDtStart"]}
+            format="MM/dd/yyyy"
+            onChange={(value, second) => {
+              internalhandleChange(value, "finalDtStart");
+            }}
+          />
+        </Grid>
+        <Grid item xs={4} container justify="flex-end">
+          <DatePicker
+            id="dt-initial-completion"
+            label="Completion start"
+            size={6}
+            value={props.values["initialDtCompletion"]}
+            format="MM/dd/yyyy"
+            onChange={(value, second) => {
+              internalhandleChange(value, "initialDtCompletion");
+            }}
+          />
+          <DatePicker
+            id="dt-final-completion"
+            label="Completion end"
+            size={6}
+            value={props.values["finalDtCompletion"]}
+            format="MM/dd/yyyy"
+            onChange={(value, second) => {
+              internalhandleChange(value, "finalDtCompletion");
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} container justify="flex-end">
+          <Button type='submit' color='primary'>
+            Search
           </Button>
         </Grid>
       </Grid>
